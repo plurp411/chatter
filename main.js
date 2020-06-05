@@ -841,10 +841,10 @@ $("#login-button").click(function () {
   var password = $("#login-password-input").val();
   if (email != '' && password != '') {
 
-    // loginUser(email, password);
+    loginUser(email, password);
 
+    // handleSignIn(email);
 
-    handleSignIn(email);
   }
 });
 
