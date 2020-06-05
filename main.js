@@ -102,7 +102,7 @@ var NewChatModal = function (_React$Component) {
               React.createElement(
                 'div',
                 { className: 'autocomplete', style: { width: "100%" } },
-                React.createElement('input', { className: 'form-control', id: 'chat-user-names-input', type: 'text', name: 'myCountry', placeholder: 'Country' })
+                React.createElement('input', { className: 'form-control', id: 'chat-user-names-input', type: 'text', placeholder: 'Chat User\'s Name' })
               )
             ),
             React.createElement(
@@ -161,7 +161,7 @@ var MainDiv = function (_React$Component2) {
             React.createElement(
               'div',
               { className: 'col-9 p-0 m-0' },
-              React.createElement(MainMessagesDiv, { messageSenders: messageSenders, messageTexts: messageTexts })
+              React.createElement(MainMessagesDiv, { messageSenders: messageSenders, messageTexts: messageTexts, chatName: this.props.chatName })
             )
           )
         )
@@ -260,10 +260,10 @@ var ComposeMessageDiv = function (_React$Component5) {
       // rounded bg-white p-2
       return React.createElement(
         'div',
-        { className: 'mr-1 mt-1' },
+        { className: 'mb-1 position-absolute w-100 pr-1', style: { bottom: "0px" } },
         React.createElement(
           'div',
-          { className: 'container-fluid m-0 p-0 w-100' },
+          { className: 'container-fluid p-0 pr-1' },
           React.createElement(
             'div',
             { className: 'row m-0 p-0 w-100' },
@@ -274,10 +274,19 @@ var ComposeMessageDiv = function (_React$Component5) {
             ),
             React.createElement(
               'div',
-              { className: 'col-3 p-0 m-0' },
+              { className: 'col-1 p-0 m-0 pl-1' },
               React.createElement(
                 'button',
-                { type: 'button', className: 'btn btn-primary w-100 ml-1', id: 'send-button' },
+                { className: 'w-100 btn btn-secondary', id: 'emoji-button' },
+                '\uD83D\uDE00'
+              )
+            ),
+            React.createElement(
+              'div',
+              { className: 'col-2 p-0 m-0 pl-1' },
+              React.createElement(
+                'button',
+                { type: 'button', className: 'btn btn-primary w-100', id: 'send-button' },
                 'Send'
               )
             )
@@ -304,9 +313,26 @@ var MainMessagesDiv = function (_React$Component6) {
     value: function render() {
       var messageSenders = this.props.messageSenders;
       var messageTexts = this.props.messageTexts;
+      var chatName = this.props.chatName;
+      console.log('chatName');
+      console.log(chatName);
+
+      if (chatName == '') {
+        chatName = 'SELECT A CHAT';
+      }
+
       return React.createElement(
         'div',
-        { className: 'bg-white p-1 rounded' },
+        { className: 'bg-white p-1 rounded h-100' },
+        React.createElement(
+          'div',
+          { className: 'position-absolute bg-white text-center pb-1', style: { width: "calc(100% - 8px)" } },
+          React.createElement(
+            'div',
+            { className: 'bg-white border border-dark text-center p-1 rounded w-100' },
+            chatName
+          )
+        ),
         React.createElement(MessagesDiv, { messageTexts: messageTexts, messageSenders: messageSenders }),
         React.createElement(ComposeMessageDiv, null)
       );
@@ -399,12 +425,12 @@ var MessageDiv = function (_React$Component9) {
 
         // labelClassText += ' bg-warning text-dark';
         labelClassText += ' bg-primary';
-        divClassText += 'float-right';
+        divClassText += 'float-right ml-5';
       } else {
 
         // labelClassText += ' bg-info text-dark';
         labelClassText += ' bg-secondary';
-        divClassText += 'float-left';
+        divClassText += 'float-left mr-5';
       }
 
       return React.createElement(
@@ -462,10 +488,10 @@ var MessagesDiv = function (_React$Component10) {
       // <div className="container-fluid bg-dark rounded p-1 mt-1 mb-1 border border-white">
       return React.createElement(
         'div',
-        { id: 'messages-div', className: 'overflow-auto', style: { height: "calc(100vh - 60px)" } },
+        { id: 'messages-div', className: 'overflow-auto position-absolute w-100 pr-1', style: { height: "calc(100vh - 98px)", top: "42px" } },
         React.createElement(
           'div',
-          { className: 'container-fluid m-0 p-0', style: {} },
+          { className: 'container-fluid m-0 p-0 pr-1', style: {} },
           messagesList
         )
       );
@@ -497,7 +523,8 @@ var App = function (_React$Component11) {
       messageTexts: [],
       messageSenders: [],
       chatNames: [],
-      chatIds: []
+      chatIds: [],
+      chatName: ''
     };
     return _this12;
   }
@@ -609,6 +636,17 @@ var App = function (_React$Component11) {
 
         scrollToBottom();
       });
+
+      this.database = database.ref().child('chats').child(chatId).child('info');
+      this.database.off();
+      this.database.on('value', function (snap) {
+
+        var chatName = snap.val().name;
+
+        _this14.setState({
+          chatName: chatName
+        });
+      });
     }
   }, {
     key: 'getChats',
@@ -622,6 +660,7 @@ var App = function (_React$Component11) {
         var chatIds = [];
 
         if (snap.exists()) {
+
           var chats = snap.val();
           var _iteratorNormalCompletion2 = true;
           var _didIteratorError2 = false;
@@ -639,6 +678,10 @@ var App = function (_React$Component11) {
               chatIds.push(key);
               _this15.getChatInfo(key);
             }
+
+            // if (CHAT_ID == '') {
+            //   this.getMessages(chatIds[0]);
+            // }
           } catch (err) {
             _didIteratorError2 = true;
             _iteratorError2 = err;
@@ -669,7 +712,7 @@ var App = function (_React$Component11) {
         React.createElement(NewChatModal, null),
         React.createElement(LoginUserDiv, { getChats: this.getChats }),
         React.createElement(CreateUserDiv, { getChats: this.getChats }),
-        React.createElement(MainDiv, { messageSenders: this.state.messageSenders, messageTexts: this.state.messageTexts, chatNames: this.state.chatNames, chatIds: this.state.chatIds, getMessages: this.getMessages })
+        React.createElement(MainDiv, { messageSenders: this.state.messageSenders, messageTexts: this.state.messageTexts, chatNames: this.state.chatNames, chatIds: this.state.chatIds, getMessages: this.getMessages, chatName: this.state.chatName })
       );
 
       // return (
@@ -710,15 +753,19 @@ ReactDOM.render(React.createElement(App, { ref: function ref(ourComponent) {
 //   textAreaAdjust(document.getElementById('message-text-text-area'));
 // }
 
-$("#send-button").click(function () {
+function handleSend() {
   // const sender = $("#message-sender-input").val();
   var sender = USER.name;
-  var text = $("#message-text-text-area").val();
+  var text = $("#message-text-text-area").val().trim();
   var timestamp = 'timestamp';
-  if (sender != '' && text != '') {
+  if (sender != '' && text != '' && CHAT_ID != '') {
     // writeMessage(sender, text);
     writeMessage(sender, text, timestamp, CHAT_ID);
   }
+}
+
+$("#send-button").click(function () {
+  handleSend();
 });
 
 function textAreaAdjust(o) {
@@ -733,6 +780,10 @@ $('#message-text-text-area').on('input', function () {
     $("#message-text-text-area").addClass('disabled');
   } else {
     $("#message-text-text-area").removeClass('disabled');
+  }
+
+  if ($("#message-text-text-area").val().trim() == '') {
+    $("#message-text-text-area").val('');
   }
 
   // textAreaAdjust(this);
@@ -789,7 +840,18 @@ $("#login-button").click(function () {
   var email = $("#login-email-input").val();
   var password = $("#login-password-input").val();
   if (email != '' && password != '') {
-    loginUser(email, password);
+
+    // loginUser(email, password);
+
+
+    handleSignIn(email);
+  }
+});
+
+$('#message-text-text-area').keypress(function (event) {
+  var keycode = event.keyCode ? event.keyCode : event.which;
+  if (keycode == '13') {
+    handleSend();
   }
 });
 
@@ -850,6 +912,7 @@ function writeChat(name, admin, userIdsDict) {
 }
 
 function writeMessage(sender, text, timestamp, chatId) {
+  console.log(chatId);
   database.ref('chats/' + chatId + '/messages/').push({
     sender: sender,
     text: text,
@@ -1101,3 +1164,95 @@ function autocomplete(inp, arr) {
 
 // /*initiate the autocomplete function on the "chat-user-names-input" element, and pass along the countries array as possible autocomplete values:*/
 // autocomplete(document.getElementById("chat-user-names-input"), countries);
+
+
+// $(function() {
+//   // Initializes and creates emoji set from sprite sheet
+//   window.emojiPicker = new EmojiPicker({
+//     emojiable_selector: '[data-emojiable=true]',
+//     assetsPath: 'lib/img/',
+//     popupButtonClasses: 'fa fa-smile-o'
+//   });
+//   // Finds all elements with `emojiable_selector` and converts them to rich emoji input fields
+//   // You may want to delay this step if you have dynamically created input fields that appear later in the loading process
+//   // It can be called as many times as necessary; previously converted input fields will not be converted again
+//   window.emojiPicker.discover();
+// });
+
+
+window.addEventListener('DOMContentLoaded', function () {
+  var button = document.querySelector('#emoji-button');
+  // const picker = new EmojiButton();
+
+  var picker = new EmojiButton({
+
+    // position of the emoji picker. Available positions:
+    // auto-start, auto-end, top, top-start, top-end, right, right-start, right-end, bottom, bottom-start, bottom-end, left, left-start, left-end
+    position: 'auto',
+
+    // 1.0, 2.0, 3,0, 4.0, 5.0, 11.0, 12.0, 12.1
+    emojiVersion: '12.1',
+
+    // root element
+    rootElement: document.body,
+
+    // auto close the emoji picker after selection
+    autoHide: false,
+
+    // auto move focus to search field or not
+    autoFocusSearch: true,
+
+    // show the emoji preview
+    showPreview: true,
+
+    // show the emoji search input
+    showSearch: true,
+
+    // show recent emoji
+    showRecents: true,
+
+    // show skin tone variants
+    showVariants: true,
+
+    // or 'twemoji'
+    style: 'native',
+
+    // 'light', 'dark', or 'auto'
+    theme: 'light',
+
+    // maximum number of recent emojis to save
+    recentsCount: 50,
+
+    // z-index property
+    zIndex: 999,
+
+    // an array of the categories to show
+    categories: ['smileys', 'people', 'animals', 'food', 'activities', 'travel', 'objects', 'symbols', 'flags'],
+
+    // i18n
+    i18n: {
+      search: 'Search',
+      categories: {
+        recents: 'Recently Used',
+        smileys: 'Smileys & People',
+        animals: 'Animals & Nature',
+        food: 'Food & Drink',
+        activities: 'Activities',
+        travel: 'Travel & Places',
+        objects: 'Objects',
+        symbols: 'Symbols',
+        flags: 'Flags'
+      },
+      notFound: 'No emojis found'
+    }
+
+  });
+
+  picker.on('emoji', function (emoji) {
+    document.querySelector('#message-text-text-area').value += emoji;
+  });
+
+  button.addEventListener('click', function () {
+    picker.pickerVisible ? picker.hidePicker() : picker.showPicker(button);
+  });
+});
