@@ -57,6 +57,8 @@ var CHAT_USERS_DICT = {};
 
 var ALL_USERS_DICT = {};
 
+var IS_GHOST_MODE = false;
+
 function scrollToBottom() {
   var messagesDiv = document.getElementById("messages-div");
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
@@ -184,13 +186,27 @@ var ActiveUsersDiv = function (_React$Component) {
 var ChatInfoModal = function (_React$Component2) {
   _inherits(ChatInfoModal, _React$Component2);
 
-  function ChatInfoModal() {
+  function ChatInfoModal(props) {
     _classCallCheck(this, ChatInfoModal);
 
-    return _possibleConstructorReturn(this, (ChatInfoModal.__proto__ || Object.getPrototypeOf(ChatInfoModal)).apply(this, arguments));
+    var _this2 = _possibleConstructorReturn(this, (ChatInfoModal.__proto__ || Object.getPrototypeOf(ChatInfoModal)).call(this, props));
+
+    _this2.updateIsGhostModeState = _this2.updateIsGhostModeState.bind(_this2);
+
+    _this2.state = {
+      isGhostMode: false
+    };
+    return _this2;
   }
 
   _createClass(ChatInfoModal, [{
+    key: 'updateIsGhostModeState',
+    value: function updateIsGhostModeState(isGhostMode) {
+      this.setState({
+        isGhostMode: isGhostMode
+      });
+    }
+  }, {
     key: 'render',
     value: function render() {
       return React.createElement(
@@ -225,7 +241,17 @@ var ChatInfoModal = function (_React$Component2) {
               { className: 'modal-body' },
               React.createElement(ActiveUsersDiv, { ref: function ref(activeUsersDivComponent) {
                   window.activeUsersDivComponent = activeUsersDivComponent;
-                } })
+                } }),
+              React.createElement(
+                'div',
+                { className: 'custom-control custom-switch mt-2' },
+                React.createElement('input', { type: 'checkbox', className: 'custom-control-input', id: 'ghostModeSwitch' }),
+                React.createElement(
+                  'label',
+                  { className: 'custom-control-label', htmlFor: 'ghostModeSwitch' },
+                  'Ghost Mode'
+                )
+              )
             )
           )
         )
@@ -637,7 +663,9 @@ var MainMessagesDiv = function (_React$Component10) {
             )
           )
         ),
-        React.createElement(MessagesDiv, { messageTexts: messageTexts, messageSenders: messageSenders }),
+        React.createElement(MessagesDiv, { ref: function ref(messagesDivComponent) {
+            window.messagesDivComponent = messagesDivComponent;
+          }, messageTexts: messageTexts, messageSenders: messageSenders }),
         React.createElement(TypingUserDiv, { ref: function ref(typingUserDivComponent) {
             window.typingUserDivComponent = typingUserDivComponent;
           } }),
@@ -664,8 +692,8 @@ var LoginUserDiv = function (_React$Component11) {
       return React.createElement(
         'div',
         { id: 'login-user-div', className: 'container-fluid bg-white p-2 mb-1 rounded' },
-        React.createElement('input', { type: 'text', className: 'form-control mb-1', placeholder: 'Email', autoComplete: 'off', id: 'login-email-input', defaultValue: '' }),
-        React.createElement('input', { type: 'password', className: 'form-control mb-2', placeholder: 'Password', autoComplete: 'off', id: 'login-password-input', defaultValue: '' }),
+        React.createElement('input', { type: 'text', className: 'form-control mb-1', placeholder: 'Email', autoComplete: 'off', id: 'login-email-input', defaultValue: '321@gmail.com' }),
+        React.createElement('input', { type: 'password', className: 'form-control mb-2', placeholder: 'Password', autoComplete: 'off', id: 'login-password-input', defaultValue: 'ttr3ttr3!' }),
         React.createElement(
           'button',
           { className: 'btn btn-primary btn-block', id: 'login-button' },
@@ -714,10 +742,28 @@ var MessageDiv = function (_React$Component13) {
   function MessageDiv(props) {
     _classCallCheck(this, MessageDiv);
 
-    return _possibleConstructorReturn(this, (MessageDiv.__proto__ || Object.getPrototypeOf(MessageDiv)).call(this, props));
+    var _this14 = _possibleConstructorReturn(this, (MessageDiv.__proto__ || Object.getPrototypeOf(MessageDiv)).call(this, props));
+
+    _this14.makeVisible = _this14.makeVisible.bind(_this14);
+    _this14.makeInvisible = _this14.makeInvisible.bind(_this14);
+    return _this14;
   }
 
   _createClass(MessageDiv, [{
+    key: 'makeVisible',
+    value: function makeVisible(e) {
+      $(e.currentTarget).css("filter", "blur(0px)");
+    }
+  }, {
+    key: 'makeInvisible',
+    value: function makeInvisible(e) {
+      if (this.props.isGhostMode) {
+        $(e.currentTarget).css("filter", "blur(3.5px)");
+      } else {
+        $(e.currentTarget).css("filter", "blur(0px)");
+      }
+    }
+  }, {
     key: 'render',
     value: function render() {
       var nextSender = this.props.nextSender;
@@ -752,6 +798,10 @@ var MessageDiv = function (_React$Component13) {
           console.log(CHAT_USERS_DICT[sender]['name'])
           console.log(' - -- -- -  -- - - - - - - - -- - - - - - -- ');*/
 
+      // if (isShown) {
+      //   divClassText += 'invisible';
+      // }
+
       var senderDivClassText = divClassText + " d-block w-100";
 
       var senderName = 'ERROR';
@@ -773,9 +823,14 @@ var MessageDiv = function (_React$Component13) {
         senderDiv = null;
       }
 
+      var styleText = {};
+      if (this.props.isGhostMode) {
+        styleText = { filter: "blur(3.5px)", transitionDuration: "0.1s" };
+      }
+
       return React.createElement(
         'div',
-        { className: divClassText },
+        { className: divClassText, onMouseEnter: this.makeVisible, onMouseLeave: this.makeInvisible, style: styleText },
         React.createElement(
           'div',
           { className: 'w-100' },
@@ -802,12 +857,24 @@ var MessagesDiv = function (_React$Component14) {
     var _this15 = _possibleConstructorReturn(this, (MessagesDiv.__proto__ || Object.getPrototypeOf(MessagesDiv)).call(this, props));
 
     _this15.getMessagesList = _this15.getMessagesList.bind(_this15);
+    _this15.updateIsGhostModeState = _this15.updateIsGhostModeState.bind(_this15);
+
+    _this15.state = {
+      isGhostMode: false
+    };
     return _this15;
   }
 
   _createClass(MessagesDiv, [{
+    key: 'updateIsGhostModeState',
+    value: function updateIsGhostModeState(isGhostMode) {
+      this.setState({
+        isGhostMode: isGhostMode
+      });
+    }
+  }, {
     key: 'getMessagesList',
-    value: function getMessagesList(messageTexts, messageSenders) {
+    value: function getMessagesList(messageTexts, messageSenders, isGhostMode) {
       // <label>&nbsp;</label>
       var messagesList = messageTexts.map(function (text, index) {
         return React.createElement(
@@ -816,7 +883,7 @@ var MessagesDiv = function (_React$Component14) {
           React.createElement(
             'div',
             { className: 'container-fluid p-0 d-inline-block' },
-            React.createElement(MessageDiv, { sender: messageSenders[index], nextSender: messageSenders[index + 1], text: text })
+            React.createElement(MessageDiv, { isGhostMode: isGhostMode, sender: messageSenders[index], nextSender: messageSenders[index + 1], text: text })
           )
         );
       });
@@ -829,7 +896,7 @@ var MessagesDiv = function (_React$Component14) {
   }, {
     key: 'render',
     value: function render() {
-      var messagesList = this.getMessagesList(this.props.messageTexts, this.props.messageSenders);
+      var messagesList = this.getMessagesList(this.props.messageTexts, this.props.messageSenders, this.state.isGhostMode || IS_GHOST_MODE);
       // <div className="container-fluid bg-dark rounded p-1 mt-1 mb-1 border border-white">
       return React.createElement(
         'div',
@@ -1057,7 +1124,9 @@ var App = function (_React$Component15) {
         'div',
         null,
         React.createElement(NewChatModal, null),
-        React.createElement(ChatInfoModal, null),
+        React.createElement(ChatInfoModal, { ref: function ref(chatInfoModalComponent) {
+            window.chatInfoModalComponent = chatInfoModalComponent;
+          } }),
         React.createElement(LoginUserDiv, { getChats: this.getChats }),
         React.createElement(CreateUserDiv, { getChats: this.getChats }),
         React.createElement(MainDiv, { messageSenders: this.state.messageSenders, messageTexts: this.state.messageTexts, chatNames: this.state.chatNames, chatIds: this.state.chatIds, getMessages: this.getMessages, chatName: this.state.chatName })
@@ -1129,6 +1198,14 @@ function textAreaAdjust(o) {
   o.style.height = "1px";
   o.style.height = 2 + o.scrollHeight + "px";
 }
+
+// $('#message-div').on('hover', function() {
+//   console.log('hello');
+//   $('#message-div').removeClass('visible');
+//   $('#message-div').addClass('invisible');
+//   $(this).removeClass('invisible');
+//   $(this).addClass('visible');
+// });
 
 $('#current-chat-name-input').on('input', function () {
   console.log($('#current-chat-name-input').val());
@@ -1356,12 +1433,12 @@ $("#login-button").click(function () {
 
     // REAL ONE
 
-    loginUser(email, password);
+    // loginUser(email, password);
+
 
     // FAKE ONE
 
-    // handleSignIn(email);
-
+    handleSignIn(email);
   }
 });
 
@@ -1493,6 +1570,12 @@ $("#hide-modal-button").click(function () {
 //   $(this).addClass('active');
 // });
 
+$('#ghostModeSwitch').change(function () {
+  IS_GHOST_MODE = $(this).is(":checked");
+  window.messagesDivComponent.updateIsGhostModeState(IS_GHOST_MODE);
+  // window.chatInfoModalComponent.updateIsGhostModeState(IS_GHOST_MODE);
+  $('#ghostModeSwitch').prop('checked', IS_GHOST_MODE);
+});
 
 // textAreaAdjust(document.getElementById('message-text-text-area'));
 
