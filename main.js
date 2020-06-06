@@ -692,8 +692,8 @@ var LoginUserDiv = function (_React$Component11) {
       return React.createElement(
         'div',
         { id: 'login-user-div', className: 'container-fluid bg-white p-2 mb-1 rounded' },
-        React.createElement('input', { type: 'text', className: 'form-control mb-1', placeholder: 'Email', autoComplete: 'off', id: 'login-email-input', defaultValue: '321@gmail.com' }),
-        React.createElement('input', { type: 'password', className: 'form-control mb-2', placeholder: 'Password', autoComplete: 'off', id: 'login-password-input', defaultValue: 'ttr3ttr3!' }),
+        React.createElement('input', { type: 'text', className: 'form-control mb-1', placeholder: 'Email', autoComplete: 'off', id: 'login-email-input', defaultValue: '' }),
+        React.createElement('input', { type: 'password', className: 'form-control mb-2', placeholder: 'Password', autoComplete: 'off', id: 'login-password-input', defaultValue: '' }),
         React.createElement(
           'button',
           { className: 'btn btn-primary btn-block', id: 'login-button' },
@@ -1433,12 +1433,12 @@ $("#login-button").click(function () {
 
     // REAL ONE
 
-    // loginUser(email, password);
-
+    loginUser(email, password);
 
     // FAKE ONE
 
-    handleSignIn(email);
+    // handleSignIn(email);
+
   }
 });
 
