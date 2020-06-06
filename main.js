@@ -49,17 +49,198 @@ var CHAT_ID = '';
 
 // let CHAT_INFO = {};
 
-var USER_NAMES_IDS_DICT = {};
+// let USER_NAMES_IDS_DICT = {};
 
 var CHAT_USER_NAMES = [];
+
+var CHAT_USERS_DICT = {};
+
+var ALL_USERS_DICT = {};
 
 function scrollToBottom() {
   var messagesDiv = document.getElementById("messages-div");
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
 
-var NewChatModal = function (_React$Component) {
-  _inherits(NewChatModal, _React$Component);
+var ActiveUsersDiv = function (_React$Component) {
+  _inherits(ActiveUsersDiv, _React$Component);
+
+  function ActiveUsersDiv(props) {
+    _classCallCheck(this, ActiveUsersDiv);
+
+    var _this = _possibleConstructorReturn(this, (ActiveUsersDiv.__proto__ || Object.getPrototypeOf(ActiveUsersDiv)).call(this, props));
+
+    _this.updateActiveUserNamesState = _this.updateActiveUserNamesState.bind(_this);
+
+    _this.state = {
+      activeUserNames: []
+    };
+    return _this;
+  }
+
+  _createClass(ActiveUsersDiv, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      this.updateActiveUserNamesState();
+    }
+  }, {
+    key: 'getActiveUsersList',
+    value: function getActiveUsersList(activeUserNames) {
+      var activeUsersList = activeUserNames.map(function (userName, index) {
+        return React.createElement(
+          'button',
+          { type: 'button', className: 'list-group-item w-100', key: index },
+          userName
+        );
+      });
+      return activeUsersList;
+    }
+  }, {
+    key: 'updateActiveUserNamesState',
+    value: function updateActiveUserNamesState() {
+
+      var activeUserNames = [];
+
+      // for (let i = 0; i < CHAT_USERS_DICT; i++) {
+      //   const userName = CHAT_USER_NAMES[i];
+      //   const userId = getKeyByValue(ALL_USERS_DICT, userName);
+      //   console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+      //   console.log(ALL_USERS_DICT[userId].isActive);
+      //   if (ALL_USERS_DICT[userId].isActive) {
+      //     activeUserNames.push(userName);
+      //   }
+      // }
+
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = Object.entries(CHAT_USERS_DICT)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var _ref = _step.value;
+
+          var _ref2 = _slicedToArray(_ref, 2);
+
+          var key = _ref2[0];
+          var value = _ref2[1];
+
+          if (key != USER.id) {
+            var userDict = ALL_USERS_DICT[key];
+            if (userDict.isActive) {
+              activeUserNames.push(userDict.name);
+            }
+          }
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      this.setState({
+        activeUserNames: activeUserNames
+      });
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var activeUsersList = this.getActiveUsersList(this.state.activeUserNames);
+
+      if (activeUsersList.length > 0) {
+
+        return React.createElement(
+          'div',
+          null,
+          'Active Users:',
+          React.createElement(
+            'div',
+            { className: 'list-group mt-1' },
+            activeUsersList
+          )
+        );
+      } else {
+
+        return React.createElement(
+          'div',
+          null,
+          'No Active Users'
+        );
+      }
+    }
+  }]);
+
+  return ActiveUsersDiv;
+}(React.Component);
+
+var ChatInfoModal = function (_React$Component2) {
+  _inherits(ChatInfoModal, _React$Component2);
+
+  function ChatInfoModal() {
+    _classCallCheck(this, ChatInfoModal);
+
+    return _possibleConstructorReturn(this, (ChatInfoModal.__proto__ || Object.getPrototypeOf(ChatInfoModal)).apply(this, arguments));
+  }
+
+  _createClass(ChatInfoModal, [{
+    key: 'render',
+    value: function render() {
+      return React.createElement(
+        'div',
+        { className: 'modal fade', id: 'chatInfoModal', tabIndex: '-1', role: 'dialog', 'aria-labelledby': 'chatInfoModalLabel', 'aria-hidden': 'true' },
+        React.createElement(
+          'div',
+          { className: 'modal-dialog' },
+          React.createElement(
+            'div',
+            { className: 'modal-content' },
+            React.createElement(
+              'div',
+              { className: 'modal-header' },
+              React.createElement(
+                'h5',
+                { className: 'modal-title', id: 'chatInfoModalLabel' },
+                'Chat Info'
+              ),
+              React.createElement(
+                'button',
+                { type: 'button', className: 'close', id: 'hide-chat-info-modal-button', 'aria-label': 'Close' },
+                React.createElement(
+                  'span',
+                  { 'aria-hidden': 'true' },
+                  '\xD7'
+                )
+              )
+            ),
+            React.createElement(
+              'div',
+              { className: 'modal-body' },
+              React.createElement(ActiveUsersDiv, { ref: function ref(activeUsersDivComponent) {
+                  window.activeUsersDivComponent = activeUsersDivComponent;
+                } })
+            )
+          )
+        )
+      );
+    }
+  }]);
+
+  return ChatInfoModal;
+}(React.Component);
+
+// <ActiveUsersDiv ref={(activeUsersDivComponent) => {window.activeUsersDivComponent = activeUsersDivComponent}} />
+
+
+var NewChatModal = function (_React$Component3) {
+  _inherits(NewChatModal, _React$Component3);
 
   function NewChatModal() {
     _classCallCheck(this, NewChatModal);
@@ -89,7 +270,7 @@ var NewChatModal = function (_React$Component) {
               ),
               React.createElement(
                 'button',
-                { type: 'button', className: 'close', 'data-dismiss': 'modal', 'aria-label': 'Close' },
+                { type: 'button', className: 'close', id: 'hide-modal-button', 'aria-label': 'Close' },
                 React.createElement(
                   'span',
                   { 'aria-hidden': 'true' },
@@ -120,12 +301,7 @@ var NewChatModal = function (_React$Component) {
               { className: 'modal-footer' },
               React.createElement(
                 'button',
-                { type: 'button', className: 'btn btn-secondary', 'data-dismiss': 'modal' },
-                'Cancel'
-              ),
-              React.createElement(
-                'button',
-                { type: 'button', id: 'create-chat-button', className: 'btn btn-primary', 'data-dismiss': 'modal' },
+                { type: 'button', className: 'btn btn-primary', id: 'create-chat-modal-button' },
                 'Create Chat'
               )
             )
@@ -140,8 +316,8 @@ var NewChatModal = function (_React$Component) {
 
 // <input id="tags"></input>
 
-var MainDiv = function (_React$Component2) {
-  _inherits(MainDiv, _React$Component2);
+var MainDiv = function (_React$Component4) {
+  _inherits(MainDiv, _React$Component4);
 
   function MainDiv(props) {
     _classCallCheck(this, MainDiv);
@@ -182,8 +358,8 @@ var MainDiv = function (_React$Component2) {
   return MainDiv;
 }(React.Component);
 
-var NavigationDiv = function (_React$Component3) {
-  _inherits(NavigationDiv, _React$Component3);
+var NavigationDiv = function (_React$Component5) {
+  _inherits(NavigationDiv, _React$Component5);
 
   function NavigationDiv(props) {
     _classCallCheck(this, NavigationDiv);
@@ -196,13 +372,17 @@ var NavigationDiv = function (_React$Component3) {
     value: function render() {
       return React.createElement(
         'div',
-        { className: 'mr-1 p-1 bg-white rounded overflow-auto', style: { height: "calc(100vh - 10px)" } },
+        { className: 'p-1 bg-white rounded mr-1', style: { height: "calc(100vh - 10px)" } },
         React.createElement(
-          'button',
-          { type: 'button', className: 'btn btn-outline-primary w-100 mb-1', 'data-toggle': 'modal', 'data-target': '#exampleModal' },
-          'New Chat'
-        ),
-        React.createElement(ChatsDiv, { chatNames: this.props.chatNames, chatIds: this.props.chatIds, getMessages: this.props.getMessages })
+          'div',
+          { className: 'pr-1 overflow-auto h-100' },
+          React.createElement(
+            'button',
+            { type: 'button', className: 'btn btn-outline-primary w-100 mb-1', id: 'new-chat-button' },
+            'New Chat'
+          ),
+          React.createElement(ChatsDiv, { chatNames: this.props.chatNames, chatIds: this.props.chatIds, getMessages: this.props.getMessages })
+        )
       );
     }
   }]);
@@ -210,8 +390,8 @@ var NavigationDiv = function (_React$Component3) {
   return NavigationDiv;
 }(React.Component);
 
-var ChatsDiv = function (_React$Component4) {
-  _inherits(ChatsDiv, _React$Component4);
+var ChatsDiv = function (_React$Component6) {
+  _inherits(ChatsDiv, _React$Component6);
 
   function ChatsDiv(props) {
     _classCallCheck(this, ChatsDiv);
@@ -222,13 +402,13 @@ var ChatsDiv = function (_React$Component4) {
   _createClass(ChatsDiv, [{
     key: 'getChatsList',
     value: function getChatsList(chatNames, chatIds) {
-      var _this5 = this;
+      var _this7 = this;
 
       var chatsList = chatIds.map(function (chatId, index) {
         return React.createElement(
           'button',
           { type: 'button', className: 'list-group-item w-100', onClick: function onClick() {
-              return _this5.props.getMessages(chatId);
+              return _this7.props.getMessages(chatId);
             }, key: index },
           chatNames[index]
         );
@@ -250,20 +430,20 @@ var ChatsDiv = function (_React$Component4) {
   return ChatsDiv;
 }(React.Component);
 
-var UsersDiv = function (_React$Component5) {
-  _inherits(UsersDiv, _React$Component5);
+var UsersDiv = function (_React$Component7) {
+  _inherits(UsersDiv, _React$Component7);
 
   function UsersDiv(props) {
     _classCallCheck(this, UsersDiv);
 
-    var _this6 = _possibleConstructorReturn(this, (UsersDiv.__proto__ || Object.getPrototypeOf(UsersDiv)).call(this, props));
+    var _this8 = _possibleConstructorReturn(this, (UsersDiv.__proto__ || Object.getPrototypeOf(UsersDiv)).call(this, props));
 
-    _this6.updateUserNamesState = _this6.updateUserNamesState.bind(_this6);
+    _this8.updateUserNamesState = _this8.updateUserNamesState.bind(_this8);
 
-    _this6.state = {
+    _this8.state = {
       userNames: []
     };
-    return _this6;
+    return _this8;
   }
 
   _createClass(UsersDiv, [{
@@ -310,8 +490,50 @@ var UsersDiv = function (_React$Component5) {
 // <button type="button" className="list-group-item list-group-item-dark d-flex justify-content-between align-items-center">Morbi leo risus<span className="badge badge-primary badge-pill ml-2">3</span></button>
 // <button type="button" className="list-group-item list-group-item-dark d-flex justify-content-between align-items-center">Porta ac consectetur ac<span className="badge badge-primary badge-pill ml-2">4</span></button>
 
-var ComposeMessageDiv = function (_React$Component6) {
-  _inherits(ComposeMessageDiv, _React$Component6);
+var TypingUserDiv = function (_React$Component8) {
+  _inherits(TypingUserDiv, _React$Component8);
+
+  function TypingUserDiv(props) {
+    _classCallCheck(this, TypingUserDiv);
+
+    var _this9 = _possibleConstructorReturn(this, (TypingUserDiv.__proto__ || Object.getPrototypeOf(TypingUserDiv)).call(this, props));
+
+    _this9.updateTypingText = _this9.updateTypingText.bind(_this9);
+
+    _this9.state = {
+      typingText: ''
+    };
+    return _this9;
+  }
+
+  _createClass(TypingUserDiv, [{
+    key: 'updateTypingText',
+    value: function updateTypingText(newTypingText) {
+      this.setState({
+        typingText: newTypingText
+      });
+    }
+
+    // {this.state.typingText}
+
+  }, {
+    key: 'render',
+    value: function render() {
+      return React.createElement(
+        'div',
+        { id: 'typing-user-div', className: 'd-inline-block bg-white p-0 pt-1 pb-2 pr-2 mb-0 position-absolute float-left text-muted small invisible', style: { bottom: "44px", borderRadius: "0px 5px 0px 0px" } },
+        this.state.typingText
+      );
+    }
+  }]);
+
+  return TypingUserDiv;
+}(React.Component);
+
+// <textarea className="form-control w-100" placeholder="Enter Message Here..." id="message-text-text-area" style={{resize: "none"}}></textarea>
+
+var ComposeMessageDiv = function (_React$Component9) {
+  _inherits(ComposeMessageDiv, _React$Component9);
 
   function ComposeMessageDiv() {
     _classCallCheck(this, ComposeMessageDiv);
@@ -335,7 +557,7 @@ var ComposeMessageDiv = function (_React$Component6) {
             React.createElement(
               'div',
               { className: 'col-9 p-0 m-0' },
-              React.createElement('textarea', { className: 'form-control w-100', placeholder: 'Enter Message Here...', id: 'message-text-text-area', style: { resize: "none" } })
+              React.createElement('input', { type: 'text', className: 'form-control w-100 h-100', placeholder: 'Enter Message Here...', id: 'message-text-text-area', style: { resize: "none" } })
             ),
             React.createElement(
               'div',
@@ -364,8 +586,8 @@ var ComposeMessageDiv = function (_React$Component6) {
   return ComposeMessageDiv;
 }(React.Component);
 
-var MainMessagesDiv = function (_React$Component7) {
-  _inherits(MainMessagesDiv, _React$Component7);
+var MainMessagesDiv = function (_React$Component10) {
+  _inherits(MainMessagesDiv, _React$Component10);
 
   function MainMessagesDiv(props) {
     _classCallCheck(this, MainMessagesDiv);
@@ -386,19 +608,39 @@ var MainMessagesDiv = function (_React$Component7) {
         chatName = 'SELECT A CHAT';
       }
 
+      // <div className="bg-white border border-dark text-left p-1 rounded w-100 pl-2">
+      //   {chatName}
+      // </div>
+
       return React.createElement(
         'div',
         { className: 'bg-white p-1 rounded h-100' },
         React.createElement(
           'div',
-          { className: 'position-absolute bg-white text-center pb-1', style: { width: "calc(100% - 8px)" } },
+          { className: 'container-fluid p-0' },
           React.createElement(
             'div',
-            { className: 'bg-white border border-dark text-center p-1 rounded w-100' },
-            chatName
+            { className: 'row m-0 p-0 w-100' },
+            React.createElement(
+              'div',
+              { className: 'col-10 p-0 m-0' },
+              React.createElement('input', { type: 'text', className: 'form-control', placeholder: 'Chat Name', autoComplete: 'off', id: 'current-chat-name-input', value: chatName, disabled: true })
+            ),
+            React.createElement(
+              'div',
+              { className: 'col-2 p-0 m-0 pl-1' },
+              React.createElement(
+                'button',
+                { type: 'button', className: 'btn btn-secondary w-100 text-white p-auto position-relative', id: 'chat-info-button', style: { height: "38px" } },
+                'Info'
+              )
+            )
           )
         ),
         React.createElement(MessagesDiv, { messageTexts: messageTexts, messageSenders: messageSenders }),
+        React.createElement(TypingUserDiv, { ref: function ref(typingUserDivComponent) {
+            window.typingUserDivComponent = typingUserDivComponent;
+          } }),
         React.createElement(ComposeMessageDiv, null)
       );
     }
@@ -407,8 +649,8 @@ var MainMessagesDiv = function (_React$Component7) {
   return MainMessagesDiv;
 }(React.Component);
 
-var LoginUserDiv = function (_React$Component8) {
-  _inherits(LoginUserDiv, _React$Component8);
+var LoginUserDiv = function (_React$Component11) {
+  _inherits(LoginUserDiv, _React$Component11);
 
   function LoginUserDiv(props) {
     _classCallCheck(this, LoginUserDiv);
@@ -422,8 +664,8 @@ var LoginUserDiv = function (_React$Component8) {
       return React.createElement(
         'div',
         { id: 'login-user-div', className: 'container-fluid bg-white p-2 mb-1 rounded' },
-        React.createElement('input', { type: 'text', className: 'form-control mb-1', placeholder: 'Email', autoComplete: 'off', id: 'login-email-input', defaultValue: '' }),
-        React.createElement('input', { type: 'password', className: 'form-control mb-2', placeholder: 'Password', autoComplete: 'off', id: 'login-password-input', defaultValue: '' }),
+        React.createElement('input', { type: 'text', className: 'form-control mb-1', placeholder: 'Email', autoComplete: 'off', id: 'login-email-input', defaultValue: '321@gmail.com' }),
+        React.createElement('input', { type: 'password', className: 'form-control mb-2', placeholder: 'Password', autoComplete: 'off', id: 'login-password-input', defaultValue: 'ttr3ttr3!' }),
         React.createElement(
           'button',
           { className: 'btn btn-primary btn-block', id: 'login-button' },
@@ -436,8 +678,8 @@ var LoginUserDiv = function (_React$Component8) {
   return LoginUserDiv;
 }(React.Component);
 
-var CreateUserDiv = function (_React$Component9) {
-  _inherits(CreateUserDiv, _React$Component9);
+var CreateUserDiv = function (_React$Component12) {
+  _inherits(CreateUserDiv, _React$Component12);
 
   function CreateUserDiv(props) {
     _classCallCheck(this, CreateUserDiv);
@@ -466,8 +708,8 @@ var CreateUserDiv = function (_React$Component9) {
   return CreateUserDiv;
 }(React.Component);
 
-var MessageDiv = function (_React$Component10) {
-  _inherits(MessageDiv, _React$Component10);
+var MessageDiv = function (_React$Component13) {
+  _inherits(MessageDiv, _React$Component13);
 
   function MessageDiv(props) {
     _classCallCheck(this, MessageDiv);
@@ -488,7 +730,7 @@ var MessageDiv = function (_React$Component10) {
 
       // mr-1
 
-      if (sender == USER.name) {
+      if (sender == USER.id) {
 
         // labelClassText += ' bg-warning text-dark';
         labelClassText += ' bg-primary float-right';
@@ -502,7 +744,20 @@ var MessageDiv = function (_React$Component10) {
         divClassText += 'float-left mr-5';
       }
 
+      /*    console.log(' - -- -- -  -- - - - - - - - -- - - - - - -- ');
+          console.log('CHAT_USERS_DICT');
+          console.log(CHAT_USERS_DICT);
+          console.log(sender);
+          console.log(sender in CHAT_USERS_DICT);
+          console.log(CHAT_USERS_DICT[sender]['name'])
+          console.log(' - -- -- -  -- - - - - - - - -- - - - - - -- ');*/
+
       var senderDivClassText = divClassText + " d-block w-100";
+
+      var senderName = 'ERROR';
+      if (sender in CHAT_USERS_DICT) {
+        senderName = CHAT_USERS_DICT[sender]['name'];
+      }
 
       var senderDiv = React.createElement(
         'div',
@@ -510,7 +765,7 @@ var MessageDiv = function (_React$Component10) {
         React.createElement(
           'label',
           { className: senderLabelClassText, style: { wordBreak: "break-all" } },
-          sender
+          senderName
         )
       );
 
@@ -538,16 +793,16 @@ var MessageDiv = function (_React$Component10) {
   return MessageDiv;
 }(React.Component);
 
-var MessagesDiv = function (_React$Component11) {
-  _inherits(MessagesDiv, _React$Component11);
+var MessagesDiv = function (_React$Component14) {
+  _inherits(MessagesDiv, _React$Component14);
 
   function MessagesDiv(props) {
     _classCallCheck(this, MessagesDiv);
 
-    var _this12 = _possibleConstructorReturn(this, (MessagesDiv.__proto__ || Object.getPrototypeOf(MessagesDiv)).call(this, props));
+    var _this15 = _possibleConstructorReturn(this, (MessagesDiv.__proto__ || Object.getPrototypeOf(MessagesDiv)).call(this, props));
 
-    _this12.getMessagesList = _this12.getMessagesList.bind(_this12);
-    return _this12;
+    _this15.getMessagesList = _this15.getMessagesList.bind(_this15);
+    return _this15;
   }
 
   _createClass(MessagesDiv, [{
@@ -578,7 +833,7 @@ var MessagesDiv = function (_React$Component11) {
       // <div className="container-fluid bg-dark rounded p-1 mt-1 mb-1 border border-white">
       return React.createElement(
         'div',
-        { id: 'messages-div', className: 'overflow-auto position-absolute w-100 pr-1', style: { height: "calc(100vh - 98px)", top: "42px" } },
+        { id: 'messages-div', className: 'overflow-auto position-absolute pr-0', style: { height: "calc(100vh - 102px)", top: "46px", width: "calc(100% - 7px)" } },
         React.createElement(
           'div',
           { className: 'container-fluid m-0 p-0 pr-1', style: {} },
@@ -591,32 +846,32 @@ var MessagesDiv = function (_React$Component11) {
   return MessagesDiv;
 }(React.Component);
 
-var App = function (_React$Component12) {
-  _inherits(App, _React$Component12);
+var App = function (_React$Component15) {
+  _inherits(App, _React$Component15);
 
   function App() {
     _classCallCheck(this, App);
 
-    var _this13 = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this));
+    var _this16 = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this));
 
-    _this13.chatNames = [];
+    _this16.chatNames = [];
 
-    _this13.getChatInfo = _this13.getChatInfo.bind(_this13);
-    _this13.getMessages = _this13.getMessages.bind(_this13);
-    _this13.getChats = _this13.getChats.bind(_this13);
+    _this16.getChatInfo = _this16.getChatInfo.bind(_this16);
+    _this16.getMessages = _this16.getMessages.bind(_this16);
+    _this16.getChats = _this16.getChats.bind(_this16);
 
     // this.database = database.ref().child('messages');
 
     // firebase.analytics();
 
-    _this13.state = {
+    _this16.state = {
       messageTexts: [],
       messageSenders: [],
       chatNames: [],
       chatIds: [],
       chatName: ''
     };
-    return _this13;
+    return _this16;
   }
 
   // getMessages(chatId) {
@@ -645,7 +900,7 @@ var App = function (_React$Component12) {
   _createClass(App, [{
     key: 'getChatInfo',
     value: function getChatInfo(chatId) {
-      var _this14 = this;
+      var _this17 = this;
 
       this.database = database.ref().child('chats').child(chatId).child('info');
       this.database.off();
@@ -657,26 +912,28 @@ var App = function (_React$Component12) {
         //   chatNames.push(value.info.name);
         // }
 
-        _this14.chatNames.push(snap.val().name);
+        _this17.chatNames.push(snap.val().name);
 
-        console.log(_this14.chatNames);
+        console.log(_this17.chatNames);
 
         // let chatNames = [];
         // for (const [key, value] of Object.entries(CHAT_INFO)) {
         //   chatNames.push(value.name);
         // }
 
-        _this14.setState({
-          chatNames: _this14.chatNames
+        _this17.setState({
+          chatNames: _this17.chatNames
         });
       });
     }
   }, {
     key: 'getMessages',
     value: function getMessages(chatId) {
-      var _this15 = this;
+      var _this18 = this;
 
       CHAT_ID = chatId;
+
+      updateChatUsersDict1(chatId);
 
       this.database = database.ref().child('chats').child(chatId).child('messages');
       this.database.off();
@@ -687,77 +944,12 @@ var App = function (_React$Component12) {
 
         if (snap.exists()) {
           var messages = snap.val();
-          var _iteratorNormalCompletion = true;
-          var _didIteratorError = false;
-          var _iteratorError = undefined;
-
-          try {
-            for (var _iterator = Object.entries(messages)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-              var _ref = _step.value;
-
-              var _ref2 = _slicedToArray(_ref, 2);
-
-              var key = _ref2[0];
-              var value = _ref2[1];
-
-              messageTexts.push(value.text);
-              messageSenders.push(value.sender);
-            }
-          } catch (err) {
-            _didIteratorError = true;
-            _iteratorError = err;
-          } finally {
-            try {
-              if (!_iteratorNormalCompletion && _iterator.return) {
-                _iterator.return();
-              }
-            } finally {
-              if (_didIteratorError) {
-                throw _iteratorError;
-              }
-            }
-          }
-        }
-
-        _this15.setState({
-          messageTexts: messageTexts,
-          messageSenders: messageSenders
-        });
-
-        scrollToBottom();
-      });
-
-      this.database = database.ref().child('chats').child(chatId).child('info');
-      this.database.off();
-      this.database.on('value', function (snap) {
-
-        var chatName = snap.val().name;
-
-        _this15.setState({
-          chatName: chatName
-        });
-      });
-    }
-  }, {
-    key: 'getChats',
-    value: function getChats(userId) {
-      var _this16 = this;
-
-      this.database = database.ref().child('users').child(userId).child('chats');
-      this.database.on('value', function (snap) {
-
-        _this16.chatNames = [];
-        var chatIds = [];
-
-        if (snap.exists()) {
-
-          var chats = snap.val();
           var _iteratorNormalCompletion2 = true;
           var _didIteratorError2 = false;
           var _iteratorError2 = undefined;
 
           try {
-            for (var _iterator2 = Object.entries(chats)[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+            for (var _iterator2 = Object.entries(messages)[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
               var _ref3 = _step2.value;
 
               var _ref4 = _slicedToArray(_ref3, 2);
@@ -765,13 +957,9 @@ var App = function (_React$Component12) {
               var key = _ref4[0];
               var value = _ref4[1];
 
-              chatIds.push(key);
-              _this16.getChatInfo(key);
+              messageTexts.push(value.text);
+              messageSenders.push(value.sender);
             }
-
-            // if (CHAT_ID == '') {
-            //   this.getMessages(chatIds[0]);
-            // }
           } catch (err) {
             _didIteratorError2 = true;
             _iteratorError2 = err;
@@ -788,7 +976,76 @@ var App = function (_React$Component12) {
           }
         }
 
-        _this16.setState({
+        _this18.setState({
+          messageTexts: messageTexts,
+          messageSenders: messageSenders
+        });
+
+        scrollToBottom();
+      });
+
+      this.database = database.ref().child('chats').child(chatId).child('info');
+      this.database.off();
+      this.database.on('value', function (snap) {
+
+        var chatName = snap.val().name;
+
+        _this18.setState({
+          chatName: chatName
+        });
+      });
+    }
+  }, {
+    key: 'getChats',
+    value: function getChats(userId) {
+      var _this19 = this;
+
+      this.database = database.ref().child('users').child(userId).child('chats');
+      this.database.on('value', function (snap) {
+
+        _this19.chatNames = [];
+        var chatIds = [];
+
+        if (snap.exists()) {
+
+          var chats = snap.val();
+          var _iteratorNormalCompletion3 = true;
+          var _didIteratorError3 = false;
+          var _iteratorError3 = undefined;
+
+          try {
+            for (var _iterator3 = Object.entries(chats)[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+              var _ref5 = _step3.value;
+
+              var _ref6 = _slicedToArray(_ref5, 2);
+
+              var key = _ref6[0];
+              var value = _ref6[1];
+
+              chatIds.push(key);
+              _this19.getChatInfo(key);
+            }
+
+            // if (CHAT_ID == '') {
+            //   this.getMessages(chatIds[0]);
+            // }
+          } catch (err) {
+            _didIteratorError3 = true;
+            _iteratorError3 = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                _iterator3.return();
+              }
+            } finally {
+              if (_didIteratorError3) {
+                throw _iteratorError3;
+              }
+            }
+          }
+        }
+
+        _this19.setState({
           chatIds: chatIds
         });
       });
@@ -800,6 +1057,7 @@ var App = function (_React$Component12) {
         'div',
         null,
         React.createElement(NewChatModal, null),
+        React.createElement(ChatInfoModal, null),
         React.createElement(LoginUserDiv, { getChats: this.getChats }),
         React.createElement(CreateUserDiv, { getChats: this.getChats }),
         React.createElement(MainDiv, { messageSenders: this.state.messageSenders, messageTexts: this.state.messageTexts, chatNames: this.state.chatNames, chatIds: this.state.chatIds, getMessages: this.getMessages, chatName: this.state.chatName })
@@ -843,9 +1101,18 @@ ReactDOM.render(React.createElement(App, { ref: function ref(ourComponent) {
 //   textAreaAdjust(document.getElementById('message-text-text-area'));
 // }
 
+$("#chat-info-button").click(function () {
+  window.activeUsersDivComponent.updateActiveUserNamesState();
+  $("#chatInfoModal").modal("show");
+});
+
+$("#hide-chat-info-modal-button").click(function () {
+  $("#chatInfoModal").modal("hide");
+});
+
 function handleSend() {
   // const sender = $("#message-sender-input").val();
-  var sender = USER.name;
+  var sender = USER.id;
   var text = $("#message-text-text-area").val().trim();
   var timestamp = Date.now();
   if (sender != '' && text != '' && CHAT_ID != '') {
@@ -863,6 +1130,11 @@ function textAreaAdjust(o) {
   o.style.height = 2 + o.scrollHeight + "px";
 }
 
+$('#current-chat-name-input').on('input', function () {
+  console.log($('#current-chat-name-input').val());
+  updateChatName(CHAT_ID, $('#current-chat-name-input').val());
+});
+
 $('#message-text-text-area').on('input', function () {
 
   var text = $("#message-text-text-area").val();
@@ -876,7 +1148,24 @@ $('#message-text-text-area').on('input', function () {
     $("#message-text-text-area").val('');
   }
 
+  updateUserTyping(USER.id, CHAT_ID);
+
   // textAreaAdjust(this);
+});
+
+var delay = function () {
+  var timer = 0;
+  return function (callback, ms) {
+    clearTimeout(timer);
+    timer = setTimeout(callback, ms);
+  };
+}();
+
+$('#message-text-text-area').on('keyup', function () {
+  console.log('KEY YUPPPPPPP');
+  delay(function () {
+    updateUserTyping(USER.id, '');
+  }, 1000);
 });
 
 function readSetUserData(email) {
@@ -888,8 +1177,142 @@ function readSetUserData(email) {
     });
   }).then(function (user) {
     window.ourComponent.getChats(USER.id);
+    updateUserActive(USER.id, true);
     // window.ourComponent.getChatInfo(USER.id);
   });
+}
+
+function updateChatUsersDict1(chatId) {
+
+  database.ref().child('chats').child(chatId).child('users').on('value', function (snap) {
+
+    var userIds = [];
+
+    if (snap.exists()) {
+      var users = snap.val();
+      var _iteratorNormalCompletion4 = true;
+      var _didIteratorError4 = false;
+      var _iteratorError4 = undefined;
+
+      try {
+        for (var _iterator4 = Object.entries(users)[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+          var _ref7 = _step4.value;
+
+          var _ref8 = _slicedToArray(_ref7, 2);
+
+          var key = _ref8[0];
+          var value = _ref8[1];
+
+          userIds.push(key);
+        }
+      } catch (err) {
+        _didIteratorError4 = true;
+        _iteratorError4 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion4 && _iterator4.return) {
+            _iterator4.return();
+          }
+        } finally {
+          if (_didIteratorError4) {
+            throw _iteratorError4;
+          }
+        }
+      }
+    }
+
+    console.log('userIds');
+    console.log(userIds);
+
+    CHAT_USERS_DICT = {};
+
+    for (var i = 0; i < userIds.length; i++) {
+
+      updateChatUsersDict2(userIds[i]);
+    }
+  });
+
+  // database.ref().child("chats").equalTo(chatId).on("value", function (snapshot) {
+
+  //   let userIds = [];
+
+  //   console.log('snapshot');
+  //   console.log(snapshot.child("users"));
+
+  //   snapshot.forEach(function(childSnapshot) {
+  //     console.log('pppppppp');
+  //     console.log(childSnapshot);
+  //     userIds.push(childSnapshot.key);
+  //   });
+
+
+  //   CHAT_USERS_DICT = {};
+
+  //   for (let i = 0; i < userIds.length; i++) {
+
+
+  //     updateChatUsersDict2(userIds[i]);
+
+
+  //   }
+
+
+  // });
+
+}
+
+function updateChatUsersDict2(userId) {
+
+  database.ref().child("users").child(userId).once("value", function (snapshot) {
+
+    if (snapshot.exists()) {
+
+      id = snapshot.key;
+      name = snapshot.val().name;
+      email = snapshot.val().email;
+      isActive = snapshot.val().is_active;
+      isTyping = snapshot.val().is_typing;
+
+      CHAT_USERS_DICT[id] = {
+        name: name,
+        email: email,
+        isActive: isActive,
+        isTyping: isTyping
+      };
+
+      console.log(CHAT_USERS_DICT);
+      console.log('aaaaaaaaa');
+    }
+  });
+}
+
+$(window).bind('beforeunload', function () {
+  updateUserActive(USER.id, false);
+  updateUserTyping(USER.id, '');
+});
+
+function updateUserActive(userId, isActive) {
+  if (userId != '') {
+    database.ref('users/' + userId).update({
+      is_active: isActive
+    });
+  }
+}
+
+function updateUserTyping(userId, chatId) {
+  if (userId != '') {
+    database.ref('users/' + userId).update({
+      is_typing: chatId
+    });
+  }
+}
+
+function updateChatName(chatId, chatName) {
+  if (chatId != '') {
+    database.ref('chats/' + chatId + '/info').update({
+      name: chatName
+    });
+  }
 }
 
 function handleSignIn(email) {
@@ -901,7 +1324,7 @@ function handleSignIn(email) {
   $("#create-user-div").addClass('d-none');
   $("#main-div").removeClass('d-none');
 
-  textAreaAdjust(document.getElementById('message-text-text-area'));
+  // textAreaAdjust(document.getElementById('message-text-text-area'));
   scrollToBottom();
 }
 
@@ -933,12 +1356,12 @@ $("#login-button").click(function () {
 
     // REAL ONE
 
-    loginUser(email, password);
+    // loginUser(email, password);
+
 
     // FAKE ONE
 
-    // handleSignIn(email);
-
+    handleSignIn(email);
   }
 });
 
@@ -952,7 +1375,8 @@ $('#message-text-text-area').keypress(function (event) {
 function writeUser(name, email) {
   database.ref('users/').push({
     email: email,
-    name: name
+    name: name,
+    is_active: false
   });
 }
 
@@ -1002,6 +1426,8 @@ function writeChat(name, admin, userIdsDict) {
     for (userId in userIdsDict) {
       database.ref('users/' + userId + '/chats/').update(_defineProperty({}, chatId, 0));
     }
+
+    $("#exampleModal").modal("hide");
   });
 }
 
@@ -1013,21 +1439,52 @@ function writeMessage(sender, text, timestamp, chatId) {
     timestamp: timestamp
   });
   $("#message-text-text-area").val('');
-  textAreaAdjust(document.getElementById('message-text-text-area'));
+  // textAreaAdjust(document.getElementById('message-text-text-area'));
+  updateUserTyping(USER.id, '');
 }
 
-$("#create-chat-button").click(function () {
+function getKeyByValue(object, value) {
+  return Object.keys(object).find(function (key) {
+    return object[key].name === value;
+  });
+}
+
+function resetNewChatModal() {
+  $("#chat-name-input").val('');
+  CHAT_USER_NAMES = [];
+  window.usersDivComponent.updateUserNamesState();
+  $("#chat-user-names-input").val('');
+}
+
+$("#create-chat-modal-button").click(function () {
   var name = $("#chat-name-input").val();
 
   var userIdsDict = {};
+  userIdsDict[USER.id] = 0;
   for (var i = 0; i < CHAT_USER_NAMES.length; i++) {
-    var _userId = USER_NAMES_IDS_DICT[CHAT_USER_NAMES[i]];
+    var _userId = getKeyByValue(ALL_USERS_DICT, CHAT_USER_NAMES[i]);
     userIdsDict[_userId] = 0;
   }
+
+  console.log('PROBLEM_HGERE');
+  console.log(CHAT_USER_NAMES);
+  console.log(ALL_USERS_DICT);
 
   if (name != '' && userIdsDict != {}) {
     writeChat(name, USER.id, userIdsDict);
   }
+
+  // resetNewChatModal();
+});
+
+$("#new-chat-button").click(function () {
+  resetNewChatModal();
+  $("#exampleModal").modal("show");
+});
+
+$("#hide-modal-button").click(function () {
+  $("#exampleModal").modal("hide");
+  // resetNewChatModal();
 });
 
 // $(".chat-button").click(function() {
@@ -1084,40 +1541,74 @@ $("#create-chat-button").click(function () {
 //   } );
 
 
-function getNames() {
+// function getNames() {
+//   database.ref().child('users').on('value', snap => {
+
+//     USER_NAMES_IDS_DICT = {};
+//     userNames = [];
+
+//     const users = snap.val();
+//     for (const [key, value] of Object.entries(users)) {
+//       USER_NAMES_IDS_DICT[value.name] = key;
+//       userNames.push(value.name);
+//     }
+
+//     autocomplete(document.getElementById("chat-user-names-input"), userNames);
+
+//   })
+// }
+
+// getNames();
+
+function getAllUsers() {
   database.ref().child('users').on('value', function (snap) {
 
-    USER_NAMES_IDS_DICT = {};
-    userNames = [];
+    ALL_USERS_DICT = {};
+    var userNames = [];
+
+    window.typingUserDivComponent.updateTypingText('');
+    $('#typing-user-div').removeClass('visible');
+    $('#typing-user-div').addClass('invisible');
 
     var users = snap.val();
-    var _iteratorNormalCompletion3 = true;
-    var _didIteratorError3 = false;
-    var _iteratorError3 = undefined;
+    var _iteratorNormalCompletion5 = true;
+    var _didIteratorError5 = false;
+    var _iteratorError5 = undefined;
 
     try {
-      for (var _iterator3 = Object.entries(users)[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-        var _ref5 = _step3.value;
+      for (var _iterator5 = Object.entries(users)[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+        var _ref9 = _step5.value;
 
-        var _ref6 = _slicedToArray(_ref5, 2);
+        var _ref10 = _slicedToArray(_ref9, 2);
 
-        var key = _ref6[0];
-        var value = _ref6[1];
+        var key = _ref10[0];
+        var value = _ref10[1];
 
-        USER_NAMES_IDS_DICT[value.name] = key;
+        ALL_USERS_DICT[key] = {
+          name: value.name,
+          email: value.email,
+          isActive: value.is_active,
+          isTyping: value.is_typing
+        };
         userNames.push(value.name);
+        //key != USER.id &&
+        if (key != USER.id && value.is_typing == CHAT_ID && value.is_typing != '') {
+          window.typingUserDivComponent.updateTypingText(value.name + ' is typing...');
+          $('#typing-user-div').removeClass('invisible');
+          $('#typing-user-div').addClass('visible');
+        }
       }
     } catch (err) {
-      _didIteratorError3 = true;
-      _iteratorError3 = err;
+      _didIteratorError5 = true;
+      _iteratorError5 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion3 && _iterator3.return) {
-          _iterator3.return();
+        if (!_iteratorNormalCompletion5 && _iterator5.return) {
+          _iterator5.return();
         }
       } finally {
-        if (_didIteratorError3) {
-          throw _iteratorError3;
+        if (_didIteratorError5) {
+          throw _iteratorError5;
         }
       }
     }
@@ -1126,14 +1617,15 @@ function getNames() {
   });
 }
 
-getNames();
+getAllUsers();
 
 $("#chat-add-user-name-button").click(function () {
 
   var userName = $("#chat-user-names-input").val();
   console.log(CHAT_USER_NAMES);
   console.log(userName);
-  if (userName in USER_NAMES_IDS_DICT && !CHAT_USER_NAMES.includes(userName)) {
+  var userId = getKeyByValue(ALL_USERS_DICT, userName);
+  if (userId != null && userId != undefined && !CHAT_USER_NAMES.includes(userName)) {
     CHAT_USER_NAMES.push(userName);
     window.usersDivComponent.updateUserNamesState();
     $("#chat-user-names-input").val('');
@@ -1370,6 +1862,14 @@ window.addEventListener('DOMContentLoaded', function () {
   });
 
   button.addEventListener('click', function () {
-    picker.pickerVisible ? picker.hidePicker() : picker.showPicker(button);
+    picker.togglePicker(button);
   });
+
+  // picker.on('emoji', emoji => {
+  //   document.querySelector('#message-text-text-area').value += emoji;
+  // });
+
+  // button.addEventListener('click', () => {
+  //   picker.pickerVisible ? picker.hidePicker() : picker.showPicker(button);
+  // });
 });
