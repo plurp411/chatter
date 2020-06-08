@@ -24,21 +24,33 @@
   } -->
 
   <style>
-/* width */
-::-webkit-scrollbar {
+
+
+/*::-webkit-scrollbar {
   width: 10px;
-/*  display: none;*/
 }
 
-/* Track */
 ::-webkit-scrollbar-track {
   background: rgb(0, 0, 0, 0.15); 
   border-radius: 5px;
 }
  
-/* Handle */
 ::-webkit-scrollbar-thumb {
   background: rgb(0, 0, 0, 0.3); 
+  border-radius: 5px;
+}*/
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(255, 255, 255, 0.15); 
+  border-radius: 5px;
+}
+ 
+::-webkit-scrollbar-thumb {
+  background: rgb(255, 255, 255, 0.3); 
   border-radius: 5px;
 }
 
@@ -147,14 +159,76 @@ input[type=submit] {
 
 
 
+@keyframes bgcolor {
+    0% {
+        background-color: #45a3e5
+    }
+
+    20% {
+        background-color: #66bf39
+    }
+
+    40% {
+        background-color: #eb670f
+    }
+
+    60% {
+        background-color: #f35
+    }
+
+    80% {
+        background-color: #864cbf
+    }
+}
 
 
 
 
+@keyframes bgcolor2 {
+    0% {
+        background-color: #f35
+    }
+
+    20% {
+        background-color: #864cbf
+    }
+
+    40% {
+        background-color: #45a3e5
+    }
+
+    60% {
+        background-color: #66bf39
+    }
+
+    80% {
+        background-color: #eb670f
+    }
+}
+
+/*.self-message-div {
+    -webkit-animation: bgcolor 40s infinite;
+    animation: bgcolor 20s infinite;
+    -webkit-animation-direction: alternate;
+    animation-direction: alternate;
+}
+
+.other-message-div {
+    -webkit-animation: bgcolor2 40s infinite;
+    animation: bgcolor2 20s infinite;
+    -webkit-animation-direction: alternate;
+    animation-direction: alternate;
+}*/
 
 
+#navigation-div {
+  overflow-x: hidden;
+}
 
-
+body {
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
 
 /*.emoji-menu { bottom: 45px !important; }*/
 
