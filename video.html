@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <title>Chatter</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="jquery-3.5.1.js"></script>
+
+</head>
+
+  <body style="background-color: rgb(60, 60, 60);">
+    <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
+    <div id="player"></div>
+
+    <div>
+
+    	<input type="text" style="width: 100%;" id="link-input"/>
+    	<button id="submit-link-button" style="width: 100%; display: none;">submit</button>
+
+    </div>
+
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-app.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+<script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-analytics.js"></script>
+
+  <!-- Insert these scripts at the bottom of the HTML, but before you use any Firebase services -->
+
+  <!-- Add Firebase products that you want to use -->
+  <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-database.js"></script>
+
+  <script>
+
+    var FB_CONFIG = {
+      apiKey: "AIzaSyCXe08GXfiLcvWO2aYckY7s-eTMxkp3j-8",
+      authDomain: "test-page-3520d.firebaseapp.com",
+      databaseURL: "https://test-page-3520d.firebaseio.com",
+      projectId: "test-page-3520d",
+      storageBucket: "test-page-3520d.appspot.com",
+      messagingSenderId: "460082871451",
+      appId: "1:460082871451:web:9493492586b77c63ae9a3e",
+      measurementId: "G-M0HZGGGG13"
+    };
+
+    let database = firebase.initializeApp(FB_CONFIG).database();
+
+    const CURRENT_USER = '_' + Math.random().toString(36).substr(2, 9);
+    let SHOULD_IGNORE = false;
+    let VIDEO_ID = '';
+
+  </script>
+
+
+
+    <script>
+      // 2. This code loads the IFrame Player API code asynchronously.
+      var tag = document.createElement('script');
+
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+      // 3. This function creates an <iframe> (and YouTube player)
+      //    after the API code downloads.
+      var player = null;
+      function onYouTubeIframeAPIReady() {
+
+        readVideoInfo();
+
+      	$("#submit-link-button").css("display", "block");
+
+      }
+
+      // 4. The API will call this function when the video player is ready.
+      function onPlayerReady(event) {
+        // event.target.playVideo();
+        // readVideoInfo();
+      }
+
+      // 5. The API calls this function when the player's state changes.
+      //    The function indicates that when playing a video (state=1),
+      //    the player should play for six seconds and then stop.
+      // var done = false;
+      function onPlayerStateChange(event) {
+
+
+
+
+
+        console.log('------------');
+        console.log(event.data);
+        console.log(getVideoTime());
+
+        // player.playVideoAt(index:Number);
+
+		if (!SHOULD_IGNORE) {
+
+	        let isPaused = true;
+	        if (event.data == YT.PlayerState.PLAYING) {
+	          isPaused = false;
+	        }
+
+	        writeVideoInfo(CURRENT_USER, VIDEO_ID, getVideoTime(), isPaused);
+
+		} else {
+			SHOULD_IGNORE = false;
+		}
+
+        // if (event.data == YT.PlayerState.PLAYING && !done) {
+        //   setTimeout(stopVideo, 6000);
+        //   done = true;
+        // }
+      }
+
+      function stopVideo() {
+        player.stopVideo();
+      }
+
+      function getVideoTime() {
+        return player.getCurrentTime();
+      }
+
+      function writeVideoInfo(fromUser, videoId, currentTime, isPaused) {
+
+        database.ref('video/').update({
+
+          from_user: fromUser,
+          video_id: videoId,
+          current_time: currentTime,
+          is_paused: isPaused
+
+        }).then(function() {
+
+          // sent
+
+        });
+      }
+
+    function readVideoInfo() {
+     var infoRef = database.ref('video/');
+     infoRef.off();
+     infoRef.on('value', function(snapshot) {
+
+        const fromUser = snapshot.val().from_user;
+        const videoId = snapshot.val().video_id;
+        const currentTime = snapshot.val().current_time;
+        const isPaused = snapshot.val().is_paused;
+
+        if (fromUser != CURRENT_USER) {
+          // player.playVideoAt(currentTime);
+
+          // SHOULD_IGNORE = true;
+
+          // player.seekTo(currentTime);
+
+          // if (isPaused) {
+          //   player.pauseVideo();
+          // } else {
+          //   player.playVideo();
+          // }
+
+          // console.log(currentTime);
+          // console.log(isPaused);
+
+
+
+        if (videoId != VIDEO_ID) {
+
+			VIDEO_ID = videoId;
+
+			if (player == null) {
+
+			    player = new YT.Player('player', {
+					height: '390',
+					width: '640',
+					videoId: videoId,
+					events: {
+						'onReady': onPlayerReady,
+						'onStateChange': onPlayerStateChange
+					}
+			    });
+
+			} else {
+				player.loadVideoById(videoId);
+			}
+
+        } else {
+
+          SHOULD_IGNORE = true;
+
+          player.seekTo(currentTime);
+
+          if (isPaused) {
+            player.pauseVideo();
+          } else {
+            player.playVideo();
+          }
+
+          console.log(currentTime);
+          console.log(isPaused);
+        }
+
+
+
+        }
+
+      });
+    }
+
+    $("#submit-link-button").click(function() {
+
+	  	const videoLink = $("#link-input").val();
+
+		var videoId = videoLink.split('v=')[1];
+		var ampersandPosition = videoId.indexOf('&');
+		if(ampersandPosition != -1) {
+		  videoId = videoId.substring(0, ampersandPosition);
+		}
+
+		VIDEO_ID = videoId;
+
+		if (player == null) {
+
+		    player = new YT.Player('player', {
+				height: '390',
+				width: '640',
+				videoId: videoId,
+				events: {
+					'onReady': onPlayerReady,
+					'onStateChange': onPlayerStateChange
+				}
+		    });
+
+		} else {
+			player.loadVideoById(videoId);
+		}
+
+	    writeVideoInfo(CURRENT_USER, VIDEO_ID, 0, true);
+    });
+
+    </script>
+
+
+
+
+
+  </body>
+</html>
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<html>
+<head>
+
+  <title>Video Player</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="jquery-3.5.1.js"></script>
+
+</head>
+
+
+
+
+
+
+<body>
+	
+	<div>
+   
+
+<div id="videoContainer">
+  <iframe width="941" height="539" src="https://www.youtube.com/embed/RBSGKlAvoiM" frameborder="0" allowfullscreen></iframe>
+</div>
+
+
+<p><a class="introVid" href="#video">Watch the video</a></p>
+
+
+
+  </div>
+
+
+<script>
+// <iframe width="941" height="539" src="https://www.youtube.com/embed/RBSGKlAvoiM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+function autoPlayVideo(vcode, width, height){
+  // "use strict";
+  // $("#videoContainer").html('<iframe width="'+width+'" height="'+height+'" src="https://www.youtube.com/embed/'+vcode'" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>');
+
+  document.getElementById('videoContainer').getCurrentTime();
+}
+
+$('a.introVid').click(function(){
+  autoPlayVideo('RBSGKlAvoiM','450','283');
+});
+
+
+</script>
+
+</body>
+</html>
+
+
+ -->
