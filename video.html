@@ -267,7 +267,7 @@
 
     $("#submit-link-button").click(function() {
 
-      const videoLink = $("#link-input").val();
+    const videoLink = $("#link-input").val();
 
     var videoId = videoLink.split('v=')[1];
     var ampersandPosition = videoId.indexOf('&');
@@ -275,25 +275,30 @@
       videoId = videoId.substring(0, ampersandPosition);
     }
 
-    VIDEO_ID = videoId;
+    // if (videoId != VIDEO_ID) {
 
-    if (player == null) {
+      VIDEO_ID = videoId;
 
-        player = new YT.Player('player', {
-        height: '337.5',
-        width: '600',
-        videoId: videoId,
-        events: {
-          'onReady': onPlayerReady,
-          'onStateChange': onPlayerStateChange
-        }
-        });
+      if (player == null) {
 
-    } else {
-      player.loadVideoById(videoId);
-    }
+          player = new YT.Player('player', {
+            height: '337.5',
+            width: '600',
+            videoId: videoId,
+            events: {
+              'onReady': onPlayerReady,
+              'onStateChange': onPlayerStateChange
+            }
+          });
 
-      writeVideoInfo(CURRENT_USER, VIDEO_ID, 0, true);
+      } else {
+        player.loadVideoById(videoId);
+      }
+
+        player.pauseVideo();
+        writeVideoInfo(CURRENT_USER, VIDEO_ID, 0, true);
+      // }
+
     });
 
     </script>
