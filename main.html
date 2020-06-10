@@ -14,6 +14,8 @@
  -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
   
+<!-- <script src="https://rawgit.com/enyo/dropzone/master/dist/dropzone.js"></script>
+<link rel="stylesheet" href="https://rawgit.com/enyo/dropzone/master/dist/dropzone.css"> -->
 
 <!--   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
   <link href="lib/css/emoji.css" rel="stylesheet"> -->
@@ -177,6 +179,10 @@ input[type=submit] {
     }
 
     80% {
+        background-color: #eb0f63
+    }
+
+    100% {
         background-color: #864cbf
     }
 }
@@ -184,7 +190,7 @@ input[type=submit] {
 
 
 
-@keyframes bgcolor2 {
+/*@keyframes bgcolor2 {
     0% {
         background-color: #f35
     }
@@ -204,22 +210,36 @@ input[type=submit] {
     80% {
         background-color: #eb670f
     }
-}
+
+    100% {
+        background-color: #eb0f63
+    }
+}*/
+
+/*@keyframes bgcolor2 {
+    0% {
+        background-color: #516a91
+    }
+
+    100% {
+        background-color: #4287f5
+    }
+}*/
 
 /*.self-message-div {
-    -webkit-animation: bgcolor 40s infinite;
-    animation: bgcolor 20s infinite;
+    -webkit-animation: bgcolor 20s infinite;
+    animation: bgcolor 10s infinite;
     -webkit-animation-direction: alternate;
     animation-direction: alternate;
 }
 
 .other-message-div {
-    -webkit-animation: bgcolor2 40s infinite;
-    animation: bgcolor2 20s infinite;
+    -webkit-animation: bgcolor2 20s infinite;
+    animation: bgcolor2 10s infinite;
     -webkit-animation-direction: alternate;
     animation-direction: alternate;
-}*/
-
+}
+*/
 
 #navigation-div {
   overflow-x: hidden;
@@ -253,7 +273,8 @@ body {
 <!-- 	<input type="text" name="message" autocomplete="off">
 	<br> -->
 
-
+<!-- <form action="/upload-target" class="dropzone"></form>
+ -->
 <!-- The core Firebase JS SDK is always required and must be listed first -->
 <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-app.js"></script>
 
@@ -266,6 +287,7 @@ body {
   <!-- Add Firebase products that you want to use -->
   <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-storage.js"></script>
 
 <script>
 
@@ -274,13 +296,27 @@ body {
     authDomain: "test-page-3520d.firebaseapp.com",
     databaseURL: "https://test-page-3520d.firebaseio.com",
     projectId: "test-page-3520d",
-    storageBucket: "test-page-3520d.appspot.com",
+    storageBucket: "gs://test-page-3520d.appspot.com",
     messagingSenderId: "460082871451",
     appId: "1:460082871451:web:9493492586b77c63ae9a3e",
     measurementId: "G-M0HZGGGG13"
   };
 
-  let database = firebase.initializeApp(FB_CONFIG).database();
+  firebase.initializeApp(FB_CONFIG);
+
+  let database = firebase.database();
+  let storage = firebase.storage();
+
+  // let storage = firebase.storage();
+  // let storageRef = storage.ref();
+  // let imagesRef = storageRef.child('images');
+
+
+  // let imageRef = imagesRef.child('test.jpg');
+
+
+
+
 
   // Your web app's Firebase configuration
   // var firebaseConfig = {
