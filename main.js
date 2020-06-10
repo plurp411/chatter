@@ -475,6 +475,7 @@ var MainDiv = function (_React$Component4) {
       var messageIds = this.props.messageIds;
       var messageSenders = this.props.messageSenders;
       var messageTexts = this.props.messageTexts;
+      var messageTimestamps = this.props.messageTimestamps;
       var chatColors = this.props.chatColors;
       return React.createElement(
         "div",
@@ -493,7 +494,7 @@ var MainDiv = function (_React$Component4) {
             React.createElement(
               "div",
               { className: "col-9 p-0 m-0" },
-              React.createElement(MainMessagesDiv, { chatColors: chatColors, messageIds: messageIds, messageSenders: messageSenders, messageTexts: messageTexts, chatName: this.props.chatName })
+              React.createElement(MainMessagesDiv, { chatColors: chatColors, messageIds: messageIds, messageSenders: messageSenders, messageTexts: messageTexts, messageTimestamps: messageTimestamps, chatName: this.props.chatName })
             )
           )
         )
@@ -545,6 +546,12 @@ var ChatsDiv = function (_React$Component6) {
     return _possibleConstructorReturn(this, (ChatsDiv.__proto__ || Object.getPrototypeOf(ChatsDiv)).call(this, props));
   }
 
+  // componentDidMount() {
+  //   if (this.props.chatIds.length > 0) {
+  //     this.props.getMessages(this.props.chatIds[0]);
+  //   }
+  // }
+
   _createClass(ChatsDiv, [{
     key: "getChatsList",
     value: function getChatsList(chatNames, chatIds) {
@@ -552,11 +559,22 @@ var ChatsDiv = function (_React$Component6) {
 
       var chatsList = chatIds.map(function (chatId, index) {
         return React.createElement(
-          "button",
-          { type: "button", className: "list-group-item w-100 list-group-item-secondary", onClick: function onClick() {
-              return _this7.props.getMessages(chatId);
-            }, key: index, style: { wordBreak: "break-all" } },
-          chatNames[index]
+          "div",
+          { key: index },
+          chatId == CHAT_ID && React.createElement(
+            "button",
+            { type: "button", className: "list-group-item w-100 list-group-item-light p-2 text-dark", onClick: function onClick() {
+                return _this7.props.getMessages(chatId);
+              }, style: { wordBreak: "break-all" } },
+            chatNames[index]
+          ),
+          chatId != CHAT_ID && React.createElement(
+            "button",
+            { type: "button", className: "list-group-item w-100 list-group-item-secondary p-2 text-secondary", onClick: function onClick() {
+                return _this7.props.getMessages(chatId);
+              }, style: { wordBreak: "break-all" } },
+            chatNames[index]
+          )
         );
       });
       return chatsList;
@@ -718,7 +736,7 @@ var ComposeMessageDiv = function (_React$Component9) {
             { className: "row m-0 p-0 w-100" },
             React.createElement(
               "div",
-              { className: "col-9 p-0 m-0" },
+              { className: "col-8 p-0 m-0" },
               React.createElement("input", { type: "text", className: "form-control w-100 h-100", placeholder: "Enter Message Here...", id: "message-text-text-area", style: { resize: "none" } })
             ),
             React.createElement(
@@ -742,7 +760,7 @@ var ComposeMessageDiv = function (_React$Component9) {
             ),
             React.createElement(
               "div",
-              { className: "col-1 m-0 pl-1", style: { paddingRight: "2px" } },
+              { className: "col-2 m-0 pl-1", style: { paddingRight: "2px" } },
               React.createElement(
                 "button",
                 { type: "button", className: "btn btn-primary w-100 h-100", id: "send-button" },
@@ -773,14 +791,15 @@ var MainMessagesDiv = function (_React$Component10) {
       var messageIds = this.props.messageIds;
       var messageSenders = this.props.messageSenders;
       var messageTexts = this.props.messageTexts;
+      var messageTimestamps = this.props.messageTimestamps;
       var chatColors = this.props.chatColors;
       var chatName = this.props.chatName;
       console.log('chatName');
       console.log(chatName);
 
-      if (chatName == '') {
-        chatName = 'SELECT A CHAT';
-      }
+      // if (chatName == '') {
+      //   chatName = 'SELECT A CHAT';
+      // }
 
       // <div className="bg-white border border-dark text-left p-1 rounded w-100 pl-2">
       //   {chatName}
@@ -813,7 +832,7 @@ var MainMessagesDiv = function (_React$Component10) {
         ),
         React.createElement(MessagesDiv, { chatColors: chatColors, ref: function ref(messagesDivComponent) {
             window.messagesDivComponent = messagesDivComponent;
-          }, messageIds: messageIds, messageTexts: messageTexts, messageSenders: messageSenders }),
+          }, messageIds: messageIds, messageTexts: messageTexts, messageSenders: messageSenders, messageTimestamps: messageTimestamps }),
         React.createElement(TypingUserDiv, { ref: function ref(typingUserDivComponent) {
             window.typingUserDivComponent = typingUserDivComponent;
           } }),
@@ -908,7 +927,7 @@ var MessageDiv = function (_React$Component13) {
       console.log('HOLAAAAA');
 
       var storageRef = storage.ref();
-      storageRef.child('images/' + fileName + '.png').getDownloadURL().then(function (url) {
+      storageRef.child('images/' + fileName).getDownloadURL().then(function (url) {
         // `url` is the download URL for 'images/stars.jpg'
 
         // This can be downloaded directly:
@@ -960,6 +979,7 @@ var MessageDiv = function (_React$Component13) {
       var nextSender = this.props.nextSender;
       var sender = this.props.sender;
       var text = this.props.text;
+      var timestamp = this.props.timestamp;
       var messageId = this.props.messageId;
       var lastSeenMessageId = this.props.lastSeenMessageId;
       var chatColors = this.props.chatColors;
@@ -1045,9 +1065,12 @@ var MessageDiv = function (_React$Component13) {
       // }
 
 
+      var timestampDate = new Date(timestamp);
+      var timestampText = timestampDate.toLocaleString("en-US", { timeZone: "America/Los_Angeles" });
+
       var textDiv = React.createElement(
         "div",
-        { className: "w-100 p-0 m-0" },
+        { className: "w-100 p-0 m-0", "data-toggle": "tooltip", title: timestampText },
         React.createElement(
           "label",
           { className: labelClassText, style: labelStyle },
@@ -1077,11 +1100,7 @@ var MessageDiv = function (_React$Component13) {
             React.createElement(
               "i",
               null,
-              React.createElement(
-                "b",
-                null,
-                "Load Image"
-              )
+              "Load Image"
             )
           )
         );
@@ -1140,7 +1159,7 @@ var MessagesDiv = function (_React$Component14) {
     }
   }, {
     key: "getMessagesList",
-    value: function getMessagesList(messageIds, messageTexts, messageSenders, isGhostMode, lastSeenMessageId) {
+    value: function getMessagesList(messageIds, messageTexts, messageSenders, isGhostMode, lastSeenMessageId, messageTimestamps) {
 
       var chatColors = this.props.chatColors;
 
@@ -1152,7 +1171,7 @@ var MessagesDiv = function (_React$Component14) {
           React.createElement(
             "div",
             { className: "container-fluid p-0 d-inline-block" },
-            React.createElement(MessageDiv, { chatColors: chatColors, isGhostMode: isGhostMode, sender: messageSenders[index], nextSender: messageSenders[index + 1], messageId: messageIds[index], lastSeenMessageId: lastSeenMessageId, text: text })
+            React.createElement(MessageDiv, { chatColors: chatColors, isGhostMode: isGhostMode, sender: messageSenders[index], nextSender: messageSenders[index + 1], messageId: messageIds[index], lastSeenMessageId: lastSeenMessageId, timestamp: messageTimestamps[index], text: text })
           ),
           lastSeenMessageId == messageIds[index] && React.createElement(
             "div",
@@ -1174,7 +1193,9 @@ var MessagesDiv = function (_React$Component14) {
   }, {
     key: "render",
     value: function render() {
-      var messagesList = this.getMessagesList(this.props.messageIds, this.props.messageTexts, this.props.messageSenders, this.state.isGhostMode || IS_GHOST_MODE, this.state.lastSeenMessageId);
+      console.log('this.props.messageTimestamps');
+      console.log(this.props.messageTimestamps);
+      var messagesList = this.getMessagesList(this.props.messageIds, this.props.messageTexts, this.props.messageSenders, this.state.isGhostMode || IS_GHOST_MODE, this.state.lastSeenMessageId, this.props.messageTimestamps);
       // <div className="container-fluid bg-dark rounded p-1 mt-1 mb-1 border border-white">
       return React.createElement(
         "div",
@@ -1214,6 +1235,7 @@ var App = function (_React$Component15) {
       messageIds: [],
       messageTexts: [],
       messageSenders: [],
+      messageTimestamps: [],
       chatNames: [],
       chatIds: [],
       chatName: '',
@@ -1317,6 +1339,13 @@ var App = function (_React$Component15) {
 
       updateChatUsersDict1(chatId);
 
+      this.setState({
+        messageIds: [],
+        messageTexts: [],
+        messageSenders: [],
+        messageTimestamps: []
+      });
+
       this.database = database.ref().child('chats').child(chatId).child('messages');
       this.database.off();
       this.database.on('value', function (snap) {
@@ -1324,6 +1353,7 @@ var App = function (_React$Component15) {
         var messageIds = [];
         var messageTexts = [];
         var messageSenders = [];
+        var messageTimestamps = [];
 
         if (snap.exists()) {
           var messages = snap.val();
@@ -1343,6 +1373,8 @@ var App = function (_React$Component15) {
               messageIds.push(key);
               messageTexts.push(value.text);
               messageSenders.push(value.sender);
+              messageTimestamps.push(value.timestamp);
+              console.log(value.timestamp);
             }
           } catch (err) {
             _didIteratorError2 = true;
@@ -1369,7 +1401,8 @@ var App = function (_React$Component15) {
         _this19.setState({
           messageIds: messageIds,
           messageTexts: messageTexts,
-          messageSenders: messageSenders
+          messageSenders: messageSenders,
+          messageTimestamps: messageTimestamps
         });
 
         scrollToBottom();
@@ -1474,6 +1507,11 @@ var App = function (_React$Component15) {
           console.log(_this20.chatNames);
         }
 
+        if (CHAT_ID == '' && _this20.chatIds.length > 0) {
+          CHAT_ID = _this20.chatIds[0];
+          _this20.getMessages(CHAT_ID);
+        }
+
         _this20.setState({
           chatIds: _this20.chatIds
         });
@@ -1491,7 +1529,7 @@ var App = function (_React$Component15) {
           } }),
         React.createElement(LoginUserDiv, { getChats: this.getChats }),
         React.createElement(CreateUserDiv, { getChats: this.getChats }),
-        React.createElement(MainDiv, { chatColors: this.state.chatColors, selfMessageColor: this.state.selfMessageColor, messageIds: this.state.messageIds, messageSenders: this.state.messageSenders, messageTexts: this.state.messageTexts, chatNames: this.state.chatNames, chatIds: this.state.chatIds, getMessages: this.getMessages, chatName: this.state.chatName })
+        React.createElement(MainDiv, { chatColors: this.state.chatColors, selfMessageColor: this.state.selfMessageColor, messageIds: this.state.messageIds, messageSenders: this.state.messageSenders, messageTexts: this.state.messageTexts, messageTimestamps: this.state.messageTimestamps, chatNames: this.state.chatNames, chatIds: this.state.chatIds, getMessages: this.getMessages, chatName: this.state.chatName })
       );
 
       // return (
@@ -1601,7 +1639,12 @@ $("#send-button").click(function () {
   } else {
 
     var fileName = '_' + Math.random().toString(36).substr(2, 9);
-    uploadFile(SELECTED_FILE, fileName);
+
+    if (canCompress(SELECTED_FILE.name)) {
+      compressAndUpload(SELECTED_FILE, fileName);
+    } else {
+      uploadFile(SELECTED_FILE, fileName);
+    }
   }
 });
 
@@ -1961,14 +2004,10 @@ function writeChat(name, admin, userIdsDict) {
 
     var chatId = snap.key;
 
-    database.ref('users/' + USER.id + '/chats/').update(_defineProperty({}, chatId, {
-      last_read: ''
-    }));
+    database.ref('users/' + USER.id + '/chats/').update(_defineProperty({}, chatId, 0));
 
     for (userId in userIdsDict) {
-      database.ref('users/' + userId + '/chats/').update(_defineProperty({}, chatId, {
-        last_read: ''
-      }));
+      database.ref('users/' + userId + '/chats/').update(_defineProperty({}, chatId, 0));
     }
 
     $("#exampleModal").modal("hide");
@@ -2011,10 +2050,10 @@ $("#create-chat-modal-button").click(function () {
   var name = $("#chat-name-input").val();
 
   var userIdsDict = {};
-  userIdsDict[USER.id] = 0;
+  userIdsDict[USER.id] = { last_read: '' };
   for (var i = 0; i < CHAT_USER_NAMES.length; i++) {
     var _userId = getKeyByValue(ALL_USERS_DICT, CHAT_USER_NAMES[i]);
-    userIdsDict[_userId] = 0;
+    userIdsDict[_userId] = { last_read: '' };
   }
 
   console.log('PROBLEM_HGERE');
@@ -2474,13 +2513,28 @@ function openFile(event) {
   SELECTED_FILE = input.files[0];
 
   if (SELECTED_FILE == null) {
+
     console.log('null');
+
     $("#file-input").prop("disabled", false);
     $("#file-input-label").html("&#128206;");
   } else {
+
     console.log('not null');
+
     $("#file-input").prop("disabled", true);
     $("#file-input-label").html("&#10004;");
+
+    console.log(SELECTED_FILE.name);
+    console.log('SELECTED_FILE.val()');
+
+    if (!isImage(SELECTED_FILE.name)) {
+
+      SELECTED_FILE = null;
+
+      $("#file-input").prop("disabled", false);
+      $("#file-input-label").html("&#128206;");
+    }
   }
 
   // $("#selected-file-div").show();
@@ -2491,15 +2545,82 @@ function uploadFile(file, fileName) {
   var storageRef = storage.ref();
   var imagesRef = storageRef.child('images');
 
-  // const fileExtension = file.filename.split('.').pop();
-  var fileExtension = "png";
-  var imageRef = imagesRef.child(fileName + "." + fileExtension);
+  var tempExtension = getExtension(file.name);
+  var fileExtension = tempExtension.toLowerCase();
+  // let imageRef = imagesRef.child(fileName + "." + fileExtension);
+  var imageRef = imagesRef.child(fileName);
 
   imageRef.put(file).then(function (snapshot) {
     SELECTED_FILE = null;
     $("#file-input").prop("disabled", false);
+    $("#file-input-label").html("&#128206;");
     handleImageSend(fileName);
   });
+}
+
+function getExtension(filename) {
+  var parts = filename.split('.');
+  return parts[parts.length - 1];
+}
+
+function isImage(filename) {
+  var ext = getExtension(filename);
+  switch (ext.toLowerCase()) {
+    case 'jpg':
+    case 'jpeg':
+    case 'gif':
+    case 'bmp':
+    case 'png':
+      //etc
+      return true;
+  }
+  return false;
+}
+
+function canCompress(filename) {
+  var ext = getExtension(filename);
+  switch (ext.toLowerCase()) {
+    case 'jpg':
+    case 'jpeg':
+    case 'png':
+      //etc
+      return true;
+  }
+  return false;
+}
+
+function compressAndUpload(file, newFileName) {
+  var fileName = file.name;
+  var tempExtension = getExtension(fileName);
+  var fileExtension = tempExtension.toLowerCase();
+  var reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = function (event) {
+    var img = new Image();
+    img.src = event.target.result;
+    img.onload = function () {
+      var elem = document.createElement('canvas');
+      var width = 300;
+      if (img.width < width) {
+        width = img.width;
+      }
+      var scaleFactor = width / img.width;
+      elem.width = width;
+      elem.height = img.height * scaleFactor;
+      var ctx = elem.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, img.height * scaleFactor);
+      ctx.canvas.toBlob(function (blob) {
+        var newFile = new File([blob], fileName, {
+          type: 'image/' + fileExtension,
+          lastModified: Date.now()
+        });
+
+        uploadFile(newFile, newFileName);
+      }, 'image/' + fileExtension, 1);
+    }, reader.onerror = function (error) {
+      return console.log(error);
+    };
+  };
 }
 
 // function drop_handler(ev) {
@@ -2529,3 +2650,8 @@ function uploadFile(file, fileName) {
 //    }
 //  }
 // }
+
+
+$(document).ready(function () {
+  $('[data-toggle="tooltip"]').tooltip();
+});
