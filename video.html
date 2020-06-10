@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html class="h-100 w-100 overflow-hidden">
 <head>
 
   <title>Chatter</title>
@@ -9,19 +9,36 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
   <script src="jquery-3.5.1.js"></script>
 
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
 </head>
 
-  <body style="background-color: rgb(60, 60, 60);">
+  <body class="bg-dark w-100 h-100 overflow-hidden">
     <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
-    <div id="player"></div>
 
-    <div>
-
-    	<input type="text" style="width: 100%;" id="link-input"/>
-    	<button id="submit-link-button" style="width: 100%; display: none;">submit</button>
-
+    <div id="loading-div" class="row align-items-center h-100 w-100">
+      <div class="col-12 text-center">
+        <div class="spinner-border text-secondary"></div>
+      </div>
     </div>
 
+    <div class="d-none" id="all-div">
+      <div class="w-100 p-2 text-center mt-3">
+        <div class="border border-white rounded" id="player"></div>
+      </div>
+
+      <div class="w-100 p-2 text-center">
+
+        <div class="w-100 text-center">
+          <input type="text" class="form-control d-inline-block" id="link-input" placeholder="Video Url" style="max-width: 600px;"/>
+        </div>
+        <div class="w-100 text-center">
+          <button class="btn btn-secondary mt-2 w-100 d-inline-block" id="submit-link-button" style="max-width: 600px;">Submit</button>
+        </div>
+
+      </div>
+    </div>
 
 <!-- The core Firebase JS SDK is always required and must be listed first -->
 <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-app.js"></script>
@@ -54,6 +71,9 @@
     const CURRENT_USER = '_' + Math.random().toString(36).substr(2, 9);
     let SHOULD_IGNORE = false;
     let VIDEO_ID = '';
+    let GOT_VIDEO_ID;
+    let GOT_CURRENT_TIME;
+    let GOT_IS_PAUSED;
 
   </script>
 
@@ -74,7 +94,7 @@
 
         readVideoInfo();
 
-      	$("#submit-link-button").css("display", "block");
+        
 
       }
 
@@ -82,7 +102,28 @@
       function onPlayerReady(event) {
         // event.target.playVideo();
         // readVideoInfo();
+
+        
+        $("#loading-div").remove();
+
+        $("#all-div").removeClass("d-none");
+        $("#all-div").addClass("d-block");
       }
+
+      var arraysMatch = function(arr1, arr2) {
+
+        // Check if the arrays are the same length
+        if (arr1.length !== arr2.length) return false;
+
+        // Check if all items exist and are in the same order
+        for (var i = 0; i < arr1.length; i++) {
+          if (arr1[i] !== arr2[i]) return false;
+        }
+
+        // Otherwise, return true
+        return true;
+
+      };
 
       // 5. The API calls this function when the player's state changes.
       //    The function indicates that when playing a video (state=1),
@@ -92,26 +133,34 @@
 
 
 
-
-
-        console.log('------------');
         console.log(event.data);
-        console.log(getVideoTime());
+
+
+
+        // console.log('------------');
+        // console.log(event.data);
+        // console.log(getVideoTime());
 
         // player.playVideoAt(index:Number);
 
-		if (!SHOULD_IGNORE) {
+    SHOULD_IGNORE = false;
+    if (!SHOULD_IGNORE) {
 
-	        let isPaused = true;
-	        if (event.data == YT.PlayerState.PLAYING) {
-	          isPaused = false;
-	        }
+          let isPaused = true;
+          if (event.data == YT.PlayerState.PLAYING) {
+            isPaused = false;
+          }
 
-	        writeVideoInfo(CURRENT_USER, VIDEO_ID, getVideoTime(), isPaused);
+          const currentTime = getVideoTime();
+          if (VIDEO_ID != GOT_VIDEO_ID || isPaused != GOT_IS_PAUSED || (Math.abs(currentTime - GOT_CURRENT_TIME) > 1)) {
+            if (event.data != YT.PlayerState.BUFFERING) {
+              writeVideoInfo(CURRENT_USER, VIDEO_ID, currentTime, isPaused);
+            }
+          }
 
-		} else {
-			SHOULD_IGNORE = false;
-		}
+    } else {
+      SHOULD_IGNORE = false;
+    }
 
         // if (event.data == YT.PlayerState.PLAYING && !done) {
         //   setTimeout(stopVideo, 6000);
@@ -169,27 +218,29 @@
           // console.log(currentTime);
           // console.log(isPaused);
 
-
+          GOT_VIDEO_ID = videoId;
+          GOT_CURRENT_TIME = currentTime;
+          GOT_IS_PAUSED = isPaused;
 
         if (videoId != VIDEO_ID) {
 
-			VIDEO_ID = videoId;
+      VIDEO_ID = videoId;
 
-			if (player == null) {
+      if (player == null) {
 
-			    player = new YT.Player('player', {
-					height: '390',
-					width: '640',
-					videoId: videoId,
-					events: {
-						'onReady': onPlayerReady,
-						'onStateChange': onPlayerStateChange
-					}
-			    });
+          player = new YT.Player('player', {
+          height: '337.5',
+          width: '600',
+          videoId: videoId,
+          events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
+          }
+          });
 
-			} else {
-				player.loadVideoById(videoId);
-			}
+      } else {
+        player.loadVideoById(videoId);
+      }
 
         } else {
 
@@ -203,8 +254,8 @@
             player.playVideo();
           }
 
-          console.log(currentTime);
-          console.log(isPaused);
+          // console.log(currentTime);
+          // console.log(isPaused);
         }
 
 
@@ -216,33 +267,33 @@
 
     $("#submit-link-button").click(function() {
 
-	  	const videoLink = $("#link-input").val();
+      const videoLink = $("#link-input").val();
 
-		var videoId = videoLink.split('v=')[1];
-		var ampersandPosition = videoId.indexOf('&');
-		if(ampersandPosition != -1) {
-		  videoId = videoId.substring(0, ampersandPosition);
-		}
+    var videoId = videoLink.split('v=')[1];
+    var ampersandPosition = videoId.indexOf('&');
+    if(ampersandPosition != -1) {
+      videoId = videoId.substring(0, ampersandPosition);
+    }
 
-		VIDEO_ID = videoId;
+    VIDEO_ID = videoId;
 
-		if (player == null) {
+    if (player == null) {
 
-		    player = new YT.Player('player', {
-				height: '390',
-				width: '640',
-				videoId: videoId,
-				events: {
-					'onReady': onPlayerReady,
-					'onStateChange': onPlayerStateChange
-				}
-		    });
+        player = new YT.Player('player', {
+        height: '337.5',
+        width: '600',
+        videoId: videoId,
+        events: {
+          'onReady': onPlayerReady,
+          'onStateChange': onPlayerStateChange
+        }
+        });
 
-		} else {
-			player.loadVideoById(videoId);
-		}
+    } else {
+      player.loadVideoById(videoId);
+    }
 
-	    writeVideoInfo(CURRENT_USER, VIDEO_ID, 0, true);
+      writeVideoInfo(CURRENT_USER, VIDEO_ID, 0, true);
     });
 
     </script>
@@ -276,8 +327,8 @@
 
 
 <body>
-	
-	<div>
+  
+  <div>
    
 
 <div id="videoContainer">
@@ -314,3 +365,4 @@ $('a.introVid').click(function(){
 
 
  -->
+
