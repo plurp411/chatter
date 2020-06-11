@@ -234,7 +234,7 @@ var ActiveUsersDiv = function (_React$Component) {
         return React.createElement(
           "div",
           null,
-          "No Active Users"
+          "No Active Users."
         );
       }
     }
@@ -361,8 +361,12 @@ var ChatInfoModal = function (_React$Component2) {
                   { className: "dropdown mt-2" },
                   React.createElement(
                     "button",
-                    { className: "btn btn-primary btn-block dropdown-toggle", type: "button", id: "dropdownMenu", "data-toggle": "dropdown", "aria-haspopup": "true", "aria-expanded": "false" },
-                    "Themes"
+                    { className: "btn btn-secondary btn-block dropdown-toggle", type: "button", id: "dropdownMenu", "data-toggle": "dropdown", "aria-haspopup": "true", "aria-expanded": "false" },
+                    React.createElement(
+                      "b",
+                      null,
+                      "Themes"
+                    )
                   ),
                   React.createElement(
                     "div",
@@ -451,7 +455,7 @@ var NewChatModal = function (_React$Component3) {
           { className: "modal-dialog" },
           React.createElement(
             "div",
-            { className: "modal-content" },
+            { className: "modal-content p-2", style: { backgroundColor: "#ebebeb" } },
             React.createElement(
               "div",
               { className: "modal-header" },
@@ -477,12 +481,16 @@ var NewChatModal = function (_React$Component3) {
               React.createElement(
                 "div",
                 { className: "autocomplete", style: { width: "100%" } },
-                React.createElement("input", { className: "form-control", id: "chat-user-names-input border-0", type: "text", placeholder: "User Name", defaultValue: "" })
+                React.createElement("input", { className: "form-control border-0", id: "chat-user-names-input", type: "text", placeholder: "User Name", defaultValue: "" })
               ),
               React.createElement(
                 "button",
-                { type: "button", className: "btn btn-outline-primary w-100 mt-1", id: "chat-add-user-name-button" },
-                "Add User"
+                { type: "button", className: "btn btn-secondary w-100 mt-2", id: "chat-add-user-name-button" },
+                React.createElement(
+                  "b",
+                  null,
+                  "Add User"
+                )
               ),
               React.createElement(UsersDiv, { ref: function ref(usersDivComponent) {
                   window.usersDivComponent = usersDivComponent;
@@ -490,11 +498,15 @@ var NewChatModal = function (_React$Component3) {
             ),
             React.createElement(
               "div",
-              { className: "modal-footer" },
+              { className: "modal-footer p-2" },
               React.createElement(
                 "button",
-                { type: "button", className: "btn btn-primary", id: "create-chat-modal-button" },
-                "Create Chat"
+                { type: "button", className: "btn btn-primary mt-2", id: "create-chat-modal-button" },
+                React.createElement(
+                  "b",
+                  null,
+                  "Create Chat"
+                )
               )
             )
           )
@@ -607,7 +619,10 @@ var ChatsDiv = function (_React$Component6) {
   function ChatsDiv(props) {
     _classCallCheck(this, ChatsDiv);
 
-    return _possibleConstructorReturn(this, (ChatsDiv.__proto__ || Object.getPrototypeOf(ChatsDiv)).call(this, props));
+    var _this6 = _possibleConstructorReturn(this, (ChatsDiv.__proto__ || Object.getPrototypeOf(ChatsDiv)).call(this, props));
+
+    _this6.getChatClassStyle = _this6.getChatClassStyle.bind(_this6);
+    return _this6;
   }
 
   // componentDidMount() {
@@ -617,6 +632,17 @@ var ChatsDiv = function (_React$Component6) {
   // }
 
   _createClass(ChatsDiv, [{
+    key: "getChatClassStyle",
+    value: function getChatClassStyle(index, chatIdsLength) {
+      var chatClassStyle = { wordBreak: "break-all" };
+      if (index == 0) {
+        chatClassStyle['borderRadius'] = '4px 4px 0px 0px';
+      } else if (index == chatIdsLength - 1) {
+        chatClassStyle['borderRadius'] = '0px 0px 4px 4px';
+      }
+      return chatClassStyle;
+    }
+  }, {
     key: "getChatsList",
     value: function getChatsList(chatNames, chatIds) {
       var _this7 = this;
@@ -627,16 +653,16 @@ var ChatsDiv = function (_React$Component6) {
           { key: index },
           chatId == CHAT_ID && React.createElement(
             "button",
-            { type: "button", className: "list-group-item w-100 list-group-item-light p-2 text-dark border-0", onClick: function onClick() {
+            { type: "button", className: "list-group-item w-100 list-group-item-light p-2 text-dark border-0 font-weight-bold", onClick: function onClick() {
                 return _this7.props.getMessages(chatId);
-              }, style: { wordBreak: "break-all" } },
+              }, style: _this7.getChatClassStyle(index, chatIds.length) },
             chatNames[index]
           ),
           chatId != CHAT_ID && React.createElement(
             "button",
             { type: "button", className: "list-group-item w-100 list-group-item-secondary p-2 text-secondary border-0", onClick: function onClick() {
                 return _this7.props.getMessages(chatId);
-              }, style: { wordBreak: "break-all" } },
+              }, style: _this7.getChatClassStyle(index, chatIds.length) },
             chatNames[index]
           )
         );
@@ -649,7 +675,7 @@ var ChatsDiv = function (_React$Component6) {
       var chatsList = this.getChatsList(this.props.chatNames, this.props.chatIds);
       return React.createElement(
         "div",
-        { className: "list-group" },
+        { className: "list-group rounded" },
         chatsList
       );
     }
@@ -907,7 +933,7 @@ var MainMessagesDiv = function (_React$Component10) {
             React.createElement(
               "div",
               { className: "col-10 p-0 m-0" },
-              React.createElement("input", { type: "text", className: "form-control border-0", autoComplete: "off", id: "current-chat-name-input", placeholder: chatName })
+              React.createElement("input", { type: "text", className: "form-control border-0 font-weight-bold", autoComplete: "off", id: "current-chat-name-input", placeholder: chatName })
             ),
             React.createElement(
               "div",
@@ -956,8 +982,8 @@ var LoginUserDiv = function (_React$Component11) {
       return React.createElement(
         "div",
         { id: "login-user-div", className: "container-fluid p-2 mb-1 rounded", style: { backgroundColor: '#ebebeb' } },
-        React.createElement("input", { type: "text", className: "form-control mb-1 border-0", placeholder: "Email", autoComplete: "off", id: "login-email-input", defaultValue: "" }),
-        React.createElement("input", { type: "password", className: "form-control mb-2 border-0", placeholder: "Password", autoComplete: "off", id: "login-password-input", defaultValue: "" }),
+        React.createElement("input", { type: "text", className: "form-control mb-1 border-0", placeholder: "Email", autoComplete: "off", id: "login-email-input", defaultValue: "321@gmail.com" }),
+        React.createElement("input", { type: "password", className: "form-control mb-2 border-0", placeholder: "Password", autoComplete: "off", id: "login-password-input", defaultValue: "1" }),
         React.createElement(
           "button",
           { className: "btn btn-primary btn-block", id: "login-button" },
@@ -1425,19 +1451,22 @@ var App = function (_React$Component15) {
 
           didDo = true;
 
-          _this18.chatNames.push(snap.val().name);
+          if (_this18.chatIds[_this18.chatNames.length] == chatId) {
+            _this18.chatNames.push(snap.val().name);
 
-          console.log('heree');
-          console.log(_this18.chatNames);
+            console.log('heree');
+            console.log(_this18.chatNames);
+            console.log(_this18.chatIds);
 
-          // let chatNames = [];
-          // for (const [key, value] of Object.entries(CHAT_INFO)) {
-          //   chatNames.push(value.name);
-          // }
+            // let chatNames = [];
+            // for (const [key, value] of Object.entries(CHAT_INFO)) {
+            //   chatNames.push(value.name);
+            // }
 
-          _this18.setState({
-            chatNames: _this18.chatNames
-          });
+            _this18.setState({
+              chatNames: _this18.chatNames
+            });
+          }
         }
       });
     }
@@ -2009,7 +2038,7 @@ function updateUserTyping(userId, chatId) {
 }
 
 function updateUserLastRead(userId, chatId, lastReadMessageId) {
-  if (userId != '' && chatId != '') {
+  if (userId != '' && chatId != '' && CHAT_USERS_DICT[USER.id].lastRead != lastReadMessageId) {
     database.ref('chats/' + chatId + '/users/' + userId).update({
       last_read: lastReadMessageId
     });
@@ -2073,12 +2102,12 @@ $("#login-button").click(function () {
 
     // REAL ONE
 
-    loginUser(email, password);
+    // loginUser(email, password);
+
 
     // FAKE ONE
 
-    // handleSignIn(email);
-
+    handleSignIn(email);
   }
 });
 
@@ -2131,7 +2160,8 @@ function writeChat(name, admin, userIdsDict) {
   var chatRef = database.ref('chats/').push({
     info: {
       name: name,
-      admin: admin
+      admin: admin,
+      chatColors: DEFAULT_CHAT_COLORS
     },
     users: userIdsDict
   }).then(function (snap) {
