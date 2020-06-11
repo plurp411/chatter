@@ -117,7 +117,11 @@ var OTHER_COLOR = '#4287f5';
 
 var SELECTED_FILE = null;
 
-var DEFAULT_CHAT_COLORS = ['#343a40', '#007bff', '#868e96', '#ffffff', '#ffffff'];
+// DARK
+// const DEFAULT_CHAT_COLORS = ['#343a40', '#007bff', '#868e96', '#ffffff', '#ffffff'];
+
+// LIGHT
+var DEFAULT_CHAT_COLORS = ['#ebebeb', '#007bff', '#868e96', '#ffffff', '#ffffff'];
 
 function scrollToBottom() {
   var messagesDiv = document.getElementById("messages-div");
@@ -234,7 +238,7 @@ var ActiveUsersDiv = function (_React$Component) {
         return React.createElement(
           "div",
           null,
-          "No Active Users."
+          "No Active Users"
         );
       }
     }
@@ -278,7 +282,7 @@ var ChatInfoModal = function (_React$Component2) {
           { className: "modal-dialog" },
           React.createElement(
             "div",
-            { className: "modal-content" },
+            { className: "modal-content border-0" },
             React.createElement(
               "div",
               { className: "modal-header" },
@@ -383,13 +387,8 @@ var ChatInfoModal = function (_React$Component2) {
                     ),
                     React.createElement(
                       "button",
-                      { className: "dropdown-item theme-button", type: "button", id: "theme-light" },
-                      "Light"
-                    ),
-                    React.createElement(
-                      "button",
-                      { className: "dropdown-item theme-button", type: "button", id: "theme-floating" },
-                      "Floating"
+                      { className: "dropdown-item theme-button", type: "button", id: "theme-white" },
+                      "White"
                     ),
                     React.createElement(
                       "button",
@@ -405,6 +404,11 @@ var ChatInfoModal = function (_React$Component2) {
                       "button",
                       { className: "dropdown-item theme-button", type: "button", id: "theme-berry" },
                       "Berry"
+                    ),
+                    React.createElement(
+                      "button",
+                      { className: "dropdown-item theme-button", type: "button", id: "theme-dark" },
+                      "Dark"
                     )
                   )
                 )
@@ -455,7 +459,7 @@ var NewChatModal = function (_React$Component3) {
           { className: "modal-dialog" },
           React.createElement(
             "div",
-            { className: "modal-content p-2", style: { backgroundColor: "#ebebeb" } },
+            { className: "modal-content border-0 p-2", style: { backgroundColor: "#ebebeb" } },
             React.createElement(
               "div",
               { className: "modal-header" },
@@ -481,7 +485,7 @@ var NewChatModal = function (_React$Component3) {
               React.createElement(
                 "div",
                 { className: "autocomplete", style: { width: "100%" } },
-                React.createElement("input", { className: "form-control border-0", id: "chat-user-names-input", type: "text", placeholder: "User Name", defaultValue: "" })
+                React.createElement("input", { className: "form-control border-0", id: "chat-user-names-input", type: "text", placeholder: "User's Name", defaultValue: "" })
               ),
               React.createElement(
                 "button",
@@ -579,6 +583,11 @@ var NavigationDiv = function (_React$Component5) {
     value: function render() {
       var chatColors = this.props.chatColors;
       var chatName = this.props.chatName;
+      var chatNames = this.props.chatNames;
+      var chatIds = this.props.chatIds;
+
+      var chatNamesLength = chatNames.length;
+      var chatIdsLength = chatIds.length;
 
       var useColors = chatColors;
       if (chatName == '') {
@@ -604,7 +613,7 @@ var NavigationDiv = function (_React$Component5) {
         React.createElement(
           "div",
           { id: "navigation-div", className: "pr-1", style: { height: "calc(100% - 42px)", overflowX: "hidden" } },
-          React.createElement(ChatsDiv, { chatNames: this.props.chatNames, chatIds: this.props.chatIds, getMessages: this.props.getMessages })
+          chatNamesLength > 0 && chatIdsLength > 0 && React.createElement(ChatsDiv, { chatNames: chatNames, chatIds: chatIds, getMessages: this.props.getMessages })
         )
       );
     }
@@ -653,7 +662,7 @@ var ChatsDiv = function (_React$Component6) {
           { key: index },
           chatId == CHAT_ID && React.createElement(
             "button",
-            { type: "button", className: "list-group-item w-100 list-group-item-light p-2 text-dark border-0 font-weight-bold", onClick: function onClick() {
+            { type: "button", className: "list-group-item w-100 list-group-item-light p-2 text-dark border-0 font-weight-bold disabled", onClick: function onClick() {
                 return _this7.props.getMessages(chatId);
               }, style: _this7.getChatClassStyle(index, chatIds.length) },
             chatNames[index]
@@ -711,7 +720,13 @@ var UsersDiv = function (_React$Component7) {
       var usersList = userNames.map(function (userName, index) {
         return React.createElement(
           "button",
-          { type: "button", className: "list-group-item w-100", key: index },
+          { type: "button", className: "list-group-item w-100 p-2", id: "add-user-name-" + index, onClick: function onClick() {
+              return removeChatUserNameAtIndex(index);
+            }, onMouseOver: function onMouseOver() {
+              return handleHoverChatUserName("add-user-name-" + index, true);
+            }, onMouseOut: function onMouseOut() {
+              return handleHoverChatUserName("add-user-name-" + index, false);
+            }, key: index },
           userName
         );
       });
@@ -1164,14 +1179,16 @@ var MessageDiv = function (_React$Component13) {
         senderName = USER.name;
       }
 
+      // let senderDiv = (
+      //   <div className="w-100 d-inline-block m-0 p-0">
+      //     <label className={senderLabelClassText} style={{wordBreak: "break-all"}}>{senderName}</label>
+      //   </div>
+      // );
+
       var senderDiv = React.createElement(
-        "div",
-        { className: "w-100 d-inline-block m-0 p-0" },
-        React.createElement(
-          "label",
-          { className: senderLabelClassText, style: { wordBreak: "break-all" } },
-          senderName
-        )
+        "label",
+        { className: senderLabelClassText, style: { wordBreak: "break-all" } },
+        senderName
       );
 
       if (sender == nextSender) {
@@ -1224,12 +1241,8 @@ var MessageDiv = function (_React$Component13) {
           React.createElement("img", { className: imageClassText, id: imageId, style: { maxHeight: "100%", maxWidth: "100%" } }),
           React.createElement(
             "label",
-            { className: labelClassText, id: imageLabelId, style: loadLabelStyle },
-            React.createElement(
-              "i",
-              null,
-              "Load Image"
-            )
+            { className: labelClassText + " load-image-label", id: imageLabelId, style: loadLabelStyle },
+            "\uD83D\uDCE5"
           )
         );
 
@@ -1303,10 +1316,10 @@ var MessagesDiv = function (_React$Component14) {
           ),
           lastSeenMessageId == messageIds[index] && React.createElement(
             "div",
-            { className: "w-100 m-0 p-0 align-items-center text-center" },
+            { className: "w-100 m-0 p-0 align-items-center text-center mb-1" },
             React.createElement(
               "label",
-              { className: "d-inline-block p-0 rounded text-white m-0 text-break bg-secondary small position-relative pr-1 pl-1", style: { wordBreak: "break-all", bottom: "6px" } },
+              { id: "seen-label", className: "d-block p-0 rounded text-black m-0 text-break small position-relative pr-1 pl-1", style: { wordBreak: "break-all", bottom: "1px", backgroundColor: "#d1d1d1" } },
               "Seen"
             )
           )
@@ -1328,7 +1341,7 @@ var MessagesDiv = function (_React$Component14) {
       return React.createElement(
         "div",
         { id: "messages-div", className: "overflow-auto position-absolute pr-0", style: { height: "calc(100vh - 102px)", top: "46px", width: "calc(100% - 10px)" } },
-        this.props.chatName == '' && this.props.messageTexts.length <= 0 && React.createElement(
+        this.props.chatName == '' && React.createElement(
           "div",
           { id: "loading-div", className: "row align-items-center h-100 w-100" },
           React.createElement(
@@ -1406,7 +1419,7 @@ var App = function (_React$Component15) {
 
   _createClass(App, [{
     key: "getChatInfo",
-    value: function getChatInfo(chatId) {
+    value: function getChatInfo(chatId, chatCount, chatsLength) {
       var _this18 = this;
 
       var didDo = false;
@@ -1463,9 +1476,11 @@ var App = function (_React$Component15) {
             //   chatNames.push(value.name);
             // }
 
-            _this18.setState({
-              chatNames: _this18.chatNames
-            });
+            if (chatCount >= chatsLength - 1) {
+              _this18.setState({
+                chatNames: _this18.chatNames
+              });
+            }
           }
         }
       });
@@ -1533,62 +1548,60 @@ var App = function (_React$Component15) {
           }
         }
 
-        LAST_MESSAGE = messageIds[messageIds.length - 1];
+        if (messageIds.length > 0) {
+          LAST_MESSAGE = messageIds[messageIds.length - 1];
+        } else {
+          LAST_MESSAGE = '';
+        }
 
         if (IS_ON_PAGE) {
           updateUserLastRead(USER.id, chatId, LAST_MESSAGE);
         }
 
-        _this19.setState({
-          messageIds: messageIds,
-          messageTexts: messageTexts,
-          messageSenders: messageSenders,
-          messageTimestamps: messageTimestamps
+        // this.setState({
+        //   messageIds: messageIds,
+        //   messageTexts: messageTexts,
+        //   messageSenders: messageSenders,
+        //   messageTimestamps: messageTimestamps
+        // });
+
+        // scrollToBottom();
+
+
+        _this19.database = database.ref().child('chats').child(chatId).child('info');
+        _this19.database.off();
+        _this19.database.on('value', function (snap) {
+
+          var chatName = snap.val().name;
+
+          // this.setState({
+          //   chatName: chatName
+          // });
+
+          var chatColors = snap.val().chatColors;
+
+          if (chatColors === undefined) {
+            chatColors = DEFAULT_CHAT_COLORS;
+          }
+
+          // this.setState({
+          //   chatColors: chatColors
+          // });
+
+
+          _this19.setState({
+            messageIds: messageIds,
+            messageTexts: messageTexts,
+            messageSenders: messageSenders,
+            messageTimestamps: messageTimestamps,
+            chatName: chatName,
+            chatColors: chatColors
+          });
+
+          scrollToBottom();
+
+          _this19.getChats(USER.id);
         });
-
-        scrollToBottom();
-      });
-
-      this.database = database.ref().child('chats').child(chatId).child('info');
-      this.database.off();
-      this.database.on('value', function (snap) {
-
-        console.log('LLLLLLLLLLLLLLLLLL');
-
-        var chatName = snap.val().name;
-
-        _this19.setState({
-          chatName: chatName
-        });
-
-        var chatColors = snap.val().chatColors;
-
-        if (chatColors === undefined) {
-          chatColors = DEFAULT_CHAT_COLORS;
-        }
-
-        _this19.setState({
-          chatColors: chatColors
-        });
-
-        _this19.getChats(USER.id);
-
-        // console.log('this_chatIds');
-        // console.log(this.chatIds.length);
-
-        // this.chatNames = [];
-
-        // for (var i = 0; i < this.chatIds.length; i++) {
-
-        //   let chatId = this.chatIds[i];
-        //   console.log('1111111111111111111111111111111111111111');
-        //   console.log(chatId);
-
-        //   this.getChatInfo(chatId);
-
-
-        // }
-
       });
     }
   }, {
@@ -1607,6 +1620,8 @@ var App = function (_React$Component15) {
           console.log('countcountcount');
 
           var chats = snap.val();
+          var chatsLength = Object.keys(chats).length;
+          var chatCount = 0;
           var _iteratorNormalCompletion3 = true;
           var _didIteratorError3 = false;
           var _iteratorError3 = undefined;
@@ -1621,7 +1636,8 @@ var App = function (_React$Component15) {
               var value = _ref6[1];
 
               _this20.chatIds.push(key);
-              _this20.getChatInfo(key);
+              _this20.getChatInfo(key, chatCount, chatsLength);
+              chatCount++;
             }
           } catch (err) {
             _didIteratorError3 = true;
@@ -1735,11 +1751,8 @@ $(".theme-button").click(function () {
     case 'theme-orange':
       updateChatColors(CHAT_ID, ['#ebebeb', '#eaa422', '#eaa422', '#ffffff', '#ffffff']);
       break;
-    case 'theme-light':
-      updateChatColors(CHAT_ID, ['#ebebeb', '#007bff', '#868e96', '#ffffff', '#ffffff']);
-      break;
-    case 'theme-floating':
-      updateChatColors(CHAT_ID, ['#ebebeb', '#ebebeb', '#ebebeb', '#000000', '#000000']);
+    case 'theme-white':
+      updateChatColors(CHAT_ID, ['#ffffff', '#ebebeb', '#ebebeb', '#000000', '#000000']);
       break;
     case 'theme-water':
       updateChatColors(CHAT_ID, ['#0c4a7c', '#1181c6', '#3daaed', '#001e53', '#001e53']);
@@ -1749,6 +1762,9 @@ $(".theme-button").click(function () {
       break;
     case 'theme-berry':
       updateChatColors(CHAT_ID, ['#a3a3f1', '#b4585a', '#b65694', '#ffffff', '#ffffff']);
+      break;
+    case 'theme-dark':
+      updateChatColors(CHAT_ID, ['#1b1b1b', '#414141', '#707070', '#ffffff', '#ffffff']);
       break;
   }
 });
@@ -2096,8 +2112,8 @@ function loginUser(email, password) {
 }
 
 $("#login-button").click(function () {
-  var email = $("#login-email-input").val();
-  var password = $("#login-password-input").val();
+  var email = $("#login-email-input").val().trim();
+  var password = $("#login-password-input").val().trim();
   if (email != '' && password != '') {
 
     // REAL ONE
@@ -2146,9 +2162,9 @@ function createUser(email, password) {
 }
 
 $("#create-user-button").click(function () {
-  var name = $("#create-user-name-input").val();
-  var email = $("#create-user-email-input").val();
-  var password = $("#create-user-password-input").val();
+  var name = $("#create-user-name-input").val().trim();
+  var email = $("#create-user-email-input").val().trim();
+  var password = $("#create-user-password-input").val().trim();
   if (email != '' && password != '') {
     writeUser(name, email);
     createUser(email, password);
@@ -2199,7 +2215,7 @@ function writeMessage(sender, text, timestamp, chatId) {
 
 function getKeyByValue(object, value) {
   return Object.keys(object).find(function (key) {
-    return object[key].name === value;
+    return object[key].email === value;
   });
 }
 
@@ -2211,12 +2227,14 @@ function resetNewChatModal() {
 }
 
 $("#create-chat-modal-button").click(function () {
-  var name = $("#chat-name-input").val();
+
+  var name = $("#chat-name-input").val().trim();
 
   var userIdsDict = {};
   userIdsDict[USER.id] = { last_read: '' };
   for (var i = 0; i < CHAT_USER_NAMES.length; i++) {
-    var _userId = getKeyByValue(ALL_USERS_DICT, CHAT_USER_NAMES[i]);
+    var userEmail = getEmailFromUserNameEmail(CHAT_USER_NAMES[i]);
+    var _userId = getKeyByValue(ALL_USERS_DICT, userEmail);
     userIdsDict[_userId] = { last_read: '' };
   }
 
@@ -2290,6 +2308,19 @@ $(document).mouseleave(function () {
   console.log('LEAVE');
   IS_ON_PAGE = false;
 });
+
+function removeChatUserNameAtIndex(index) {
+  CHAT_USER_NAMES.splice(index, 1);
+  window.usersDivComponent.updateUserNamesState();
+}
+
+function handleHoverChatUserName(id, isHovering) {
+  if (isHovering) {
+    $("#" + id).addClass('list-group-item-danger');
+  } else {
+    $("#" + id).removeClass('list-group-item-danger');
+  }
+}
 
 // function readSetUserData(email) {
 //   database.ref().child("users").orderByChild("name").equalTo(name).once("value", function (snapshot) {
@@ -2378,13 +2409,17 @@ function getAllUsers() {
         var key = _ref10[0];
         var value = _ref10[1];
 
+
         ALL_USERS_DICT[key] = {
           name: value.name,
           email: value.email,
           isActive: value.is_active,
           isTyping: value.is_typing
         };
-        userNames.push(value.name);
+
+        // userNames.push(value.name);
+        userNames.push(value.name + " (" + value.email + ")");
+
         //key != USER.id &&
         if (key != USER.id && value.is_typing == CHAT_ID && value.is_typing != '') {
           window.typingUserDivComponent.updateTypingText(value.name + ' is typing...');
@@ -2415,16 +2450,40 @@ getAllUsers();
 
 $("#chat-add-user-name-button").click(function () {
 
-  var userName = $("#chat-user-names-input").val();
-  console.log(CHAT_USER_NAMES);
-  console.log(userName);
-  var userId = getKeyByValue(ALL_USERS_DICT, userName);
-  if (userId != null && userId != undefined && !CHAT_USER_NAMES.includes(userName)) {
-    CHAT_USER_NAMES.push(userName);
+  // const userName = $("#chat-user-names-input").val();
+
+  // console.log(CHAT_USER_NAMES);
+  // console.log(userName);
+
+  // const userId = getKeyByValue(ALL_USERS_DICT, userName);
+  // if (userId != null && userId != undefined && !CHAT_USER_NAMES.includes(userName)) {
+  //   CHAT_USER_NAMES.push(userName);
+  //   window.usersDivComponent.updateUserNamesState();
+  //   $("#chat-user-names-input").val('');
+  // }
+
+
+  var currentVal = $("#chat-user-names-input").val().trim();
+
+  if (currentVal == '') {
+    return;
+  }
+
+  var userEmail = getEmailFromUserNameEmail(currentVal);
+  var userId = getKeyByValue(ALL_USERS_DICT, userEmail);
+  if (userId != null && userId != undefined && !CHAT_USER_NAMES.includes(currentVal)) {
+    CHAT_USER_NAMES.push(currentVal);
     window.usersDivComponent.updateUserNamesState();
     $("#chat-user-names-input").val('');
   }
 });
+
+function getEmailFromUserNameEmail(userNameEmail) {
+  var splitVal = userNameEmail.trim().split('(');
+  var tempVal = splitVal[1];
+  var userEmail = tempVal.substring(0, tempVal.length - 1);
+  return userEmail;
+}
 
 // writeUserData(0, 'Joe Stapelton', 'joey');
 
@@ -2494,8 +2553,18 @@ function autocomplete(inp, arr) {
         b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
         /*execute a function when someone clicks on the item value (DIV element):*/
         b.addEventListener("click", function (e) {
+
           /*insert the value for the autocomplete text field:*/
           inp.value = this.getElementsByTagName("input")[0].value;
+
+          // const currentVal = this.getElementsByTagName("input")[0].value;
+          // const email = 
+
+          // console.log(this.getElementsByTagName("input")[0].value);
+          // console.log('this.getElementsByTagName("input")[0].value');
+          // inp.value = this.getElementsByTagName("input")[0].value;
+
+
           /*close the list of autocompleted values,
           (or any other open lists of autocompleted values:*/
           closeAllLists();
