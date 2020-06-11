@@ -1347,7 +1347,7 @@ var MessagesDiv = function (_React$Component14) {
           React.createElement(
             "div",
             { className: "col-12 text-center" },
-            React.createElement("div", { className: "spinner-border text-secondary" })
+            React.createElement("div", { className: "spinner-border text-light" })
           )
         ),
         React.createElement(
