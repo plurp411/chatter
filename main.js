@@ -282,7 +282,7 @@ var ChatInfoModal = function (_React$Component2) {
           { className: "modal-dialog" },
           React.createElement(
             "div",
-            { className: "modal-content border-0" },
+            { className: "modal-content border-0", style: { backgroundColor: "#ebebeb" } },
             React.createElement(
               "div",
               { className: "modal-header" },
@@ -997,8 +997,8 @@ var LoginUserDiv = function (_React$Component11) {
       return React.createElement(
         "div",
         { id: "login-user-div", className: "container-fluid p-2 mb-1 rounded", style: { backgroundColor: '#ebebeb' } },
-        React.createElement("input", { type: "text", className: "form-control mb-1 border-0", placeholder: "Email", autoComplete: "off", id: "login-email-input", defaultValue: "321@gmail.com" }),
-        React.createElement("input", { type: "password", className: "form-control mb-2 border-0", placeholder: "Password", autoComplete: "off", id: "login-password-input", defaultValue: "1" }),
+        React.createElement("input", { type: "text", className: "form-control mb-1 border-0", placeholder: "Email", autoComplete: "off", id: "login-email-input", defaultValue: "" }),
+        React.createElement("input", { type: "password", className: "form-control mb-2 border-0", placeholder: "Password", autoComplete: "off", id: "login-password-input", defaultValue: "" }),
         React.createElement(
           "button",
           { className: "btn btn-primary btn-block", id: "login-button" },
@@ -2118,12 +2118,12 @@ $("#login-button").click(function () {
 
     // REAL ONE
 
-    // loginUser(email, password);
-
+    loginUser(email, password);
 
     // FAKE ONE
 
-    handleSignIn(email);
+    // handleSignIn(email);
+
   }
 });
 
