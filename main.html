@@ -250,7 +250,31 @@ body {
   overflow-y: hidden;
 }
 
+
+
+
+/*.btn {
+  transition-duration: 0.4s !important;
+}*/
+
+.btn:hover {
+  opacity: 0.85;
+}
+
+.list-group-item:focus, .list-group-item:active, .btn:focus, .btn:active {
+   outline: none !important;
+   box-shadow: none;
+}
+
+.form-control:focus, .form-control:active {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
 /*.emoji-menu { bottom: 45px !important; }*/
+
+
+
 
 
 
@@ -298,8 +322,11 @@ body {
 
 </head>
 
-<body class="p-1 bg-dark">
-	
+<!-- <body class="p-1 bg-dark"> -->
+<body class="p-1" style="background-color: #d4d4d4;">
+<!-- <body class="p-1 bg-dark">
+ -->
+
 	<div id='root'></div>
 
 <!-- 	<input type="text" name="message" autocomplete="off">

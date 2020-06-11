@@ -117,6 +117,8 @@ var OTHER_COLOR = '#4287f5';
 
 var SELECTED_FILE = null;
 
+var DEFAULT_CHAT_COLORS = ['#343a40', '#007bff', '#868e96', '#ffffff', '#ffffff'];
+
 function scrollToBottom() {
   var messagesDiv = document.getElementById("messages-div");
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
@@ -223,7 +225,7 @@ var ActiveUsersDiv = function (_React$Component) {
           "Active Users:",
           React.createElement(
             "div",
-            { className: "list-group mt-1" },
+            { className: "list-group mt-1 rounded" },
             activeUsersList
           )
         );
@@ -355,9 +357,52 @@ var ChatInfoModal = function (_React$Component2) {
                   )
                 ),
                 React.createElement(
-                  "button",
-                  { className: "btn btn-primary btn-block mt-2", id: "reset-chat-colors-button" },
-                  "Reset Colors"
+                  "div",
+                  { className: "dropdown mt-2" },
+                  React.createElement(
+                    "button",
+                    { className: "btn btn-primary btn-block dropdown-toggle", type: "button", id: "dropdownMenu", "data-toggle": "dropdown", "aria-haspopup": "true", "aria-expanded": "false" },
+                    "Themes"
+                  ),
+                  React.createElement(
+                    "div",
+                    { className: "dropdown-menu", "aria-labelledby": "dropdownMenu" },
+                    React.createElement(
+                      "button",
+                      { className: "dropdown-item theme-button", type: "button", id: "theme-original" },
+                      "Original"
+                    ),
+                    React.createElement(
+                      "button",
+                      { className: "dropdown-item theme-button", type: "button", id: "theme-orange" },
+                      "Orange"
+                    ),
+                    React.createElement(
+                      "button",
+                      { className: "dropdown-item theme-button", type: "button", id: "theme-light" },
+                      "Light"
+                    ),
+                    React.createElement(
+                      "button",
+                      { className: "dropdown-item theme-button", type: "button", id: "theme-floating" },
+                      "Floating"
+                    ),
+                    React.createElement(
+                      "button",
+                      { className: "dropdown-item theme-button", type: "button", id: "theme-water" },
+                      "Water"
+                    ),
+                    React.createElement(
+                      "button",
+                      { className: "dropdown-item theme-button", type: "button", id: "theme-beige" },
+                      "Beige"
+                    ),
+                    React.createElement(
+                      "button",
+                      { className: "dropdown-item theme-button", type: "button", id: "theme-berry" },
+                      "Berry"
+                    )
+                  )
                 )
               ),
               React.createElement(
@@ -379,6 +424,9 @@ var ChatInfoModal = function (_React$Component2) {
 
   return ChatInfoModal;
 }(React.Component);
+
+//                  <button className="btn btn-primary btn-block mt-1" id="reset-chat-colors-button">Reset Colors</button>
+
 
 // <ActiveUsersDiv ref={(activeUsersDivComponent) => {window.activeUsersDivComponent = activeUsersDivComponent}} />
 
@@ -425,11 +473,11 @@ var NewChatModal = function (_React$Component3) {
             React.createElement(
               "div",
               { className: "modal-body" },
-              React.createElement("input", { type: "text", className: "form-control mb-2", placeholder: "Chat Name", autoComplete: "off", id: "chat-name-input", defaultValue: "" }),
+              React.createElement("input", { type: "text", className: "form-control mb-2 border-0", placeholder: "Chat Name", autoComplete: "off", id: "chat-name-input", defaultValue: "" }),
               React.createElement(
                 "div",
                 { className: "autocomplete", style: { width: "100%" } },
-                React.createElement("input", { className: "form-control", id: "chat-user-names-input", type: "text", placeholder: "User Name", defaultValue: "" })
+                React.createElement("input", { className: "form-control", id: "chat-user-names-input border-0", type: "text", placeholder: "User Name", defaultValue: "" })
               ),
               React.createElement(
                 "button",
@@ -489,7 +537,7 @@ var MainDiv = function (_React$Component4) {
             React.createElement(
               "div",
               { className: "col-3 p-0 m-0" },
-              React.createElement(NavigationDiv, { chatNames: this.props.chatNames, chatIds: this.props.chatIds, getMessages: this.props.getMessages })
+              React.createElement(NavigationDiv, { chatColors: chatColors, chatNames: this.props.chatNames, chatIds: this.props.chatIds, getMessages: this.props.getMessages, chatName: this.props.chatName })
             ),
             React.createElement(
               "div",
@@ -517,17 +565,33 @@ var NavigationDiv = function (_React$Component5) {
   _createClass(NavigationDiv, [{
     key: "render",
     value: function render() {
+      var chatColors = this.props.chatColors;
+      var chatName = this.props.chatName;
+
+      var useColors = chatColors;
+      if (chatName == '') {
+        // useColors = DEFAULT_CHAT_COLORS;
+      }
+
+      var navigationBackgroundColor = useColors[0];
+      var newChatButtonBackgroundColor = useColors[1];
+      var newChatButtonTextColor = useColors[3];
+
       return React.createElement(
         "div",
-        { className: "p-1 bg-dark rounded mr-1 border border-white", style: { height: "calc(100vh - 10px)" } },
+        { className: "p-1 rounded mr-1 border border-0", style: { height: "calc(100vh - 8px)", backgroundColor: navigationBackgroundColor } },
+        React.createElement(
+          "button",
+          { type: "button", className: "btn w-100 mb-1", id: "new-chat-button", style: { backgroundColor: newChatButtonBackgroundColor, color: newChatButtonTextColor } },
+          React.createElement(
+            "b",
+            null,
+            "New Chat"
+          )
+        ),
         React.createElement(
           "div",
-          { id: "navigation-div", className: "pr-1 h-100", style: { overflowX: "hidden" } },
-          React.createElement(
-            "button",
-            { type: "button", className: "btn btn-primary w-100 mb-1", id: "new-chat-button" },
-            "New Chat"
-          ),
+          { id: "navigation-div", className: "pr-1", style: { height: "calc(100% - 42px)", overflowX: "hidden" } },
           React.createElement(ChatsDiv, { chatNames: this.props.chatNames, chatIds: this.props.chatIds, getMessages: this.props.getMessages })
         )
       );
@@ -563,14 +627,14 @@ var ChatsDiv = function (_React$Component6) {
           { key: index },
           chatId == CHAT_ID && React.createElement(
             "button",
-            { type: "button", className: "list-group-item w-100 list-group-item-light p-2 text-dark", onClick: function onClick() {
+            { type: "button", className: "list-group-item w-100 list-group-item-light p-2 text-dark border-0", onClick: function onClick() {
                 return _this7.props.getMessages(chatId);
               }, style: { wordBreak: "break-all" } },
             chatNames[index]
           ),
           chatId != CHAT_ID && React.createElement(
             "button",
-            { type: "button", className: "list-group-item w-100 list-group-item-secondary p-2 text-secondary", onClick: function onClick() {
+            { type: "button", className: "list-group-item w-100 list-group-item-secondary p-2 text-secondary border-0", onClick: function onClick() {
                 return _this7.props.getMessages(chatId);
               }, style: { wordBreak: "break-all" } },
             chatNames[index]
@@ -699,10 +763,10 @@ var TypingUserDiv = function (_React$Component8) {
 var ComposeMessageDiv = function (_React$Component9) {
   _inherits(ComposeMessageDiv, _React$Component9);
 
-  function ComposeMessageDiv() {
+  function ComposeMessageDiv(props) {
     _classCallCheck(this, ComposeMessageDiv);
 
-    return _possibleConstructorReturn(this, (ComposeMessageDiv.__proto__ || Object.getPrototypeOf(ComposeMessageDiv)).apply(this, arguments));
+    return _possibleConstructorReturn(this, (ComposeMessageDiv.__proto__ || Object.getPrototypeOf(ComposeMessageDiv)).call(this, props));
   }
 
   _createClass(ComposeMessageDiv, [{
@@ -718,13 +782,25 @@ var ComposeMessageDiv = function (_React$Component9) {
         zIndex: "-1"
       };
 
+      var chatColors = this.props.chatColors;
+      var chatName = this.props.chatName;
+
+      var useColors = chatColors;
+      if (chatName == '') {
+        // useColors = DEFAULT_CHAT_COLORS;
+      }
+
+      var sendButtonBackgroundColor = useColors[1];
+      var sendButtonTextColor = useColors[3];
+      var otherButtonsBackgroundColor = useColors[2];
+
       var fileLabelStyle = {
         cursor: "pointer",
-        backgroundColor: LightenDarkenColor("#868e96", -20),
-        transitionDuration: "0.2s"
+        backgroundColor: otherButtonsBackgroundColor
       };
 
-      // rounded bg-white p-2
+      // transitionDuration: "0.2s"
+
       return React.createElement(
         "div",
         { className: "mb-1 position-absolute w-100 pr-1", style: { bottom: "0px" } },
@@ -737,7 +813,7 @@ var ComposeMessageDiv = function (_React$Component9) {
             React.createElement(
               "div",
               { className: "col-8 p-0 m-0" },
-              React.createElement("input", { type: "text", className: "form-control w-100 h-100", placeholder: "Enter Message Here...", id: "message-text-text-area", style: { resize: "none" } })
+              React.createElement("input", { type: "text", className: "form-control w-100 h-100 border-0", placeholder: "Enter Message Here...", id: "message-text-text-area", style: { resize: "none" } })
             ),
             React.createElement(
               "div",
@@ -754,7 +830,7 @@ var ComposeMessageDiv = function (_React$Component9) {
               { className: "col-1 p-0 m-0 pl-1" },
               React.createElement(
                 "button",
-                { className: "w-100 btn btn-secondary h-100", id: "emoji-button" },
+                { className: "w-100 btn h-100 border-0", id: "emoji-button", style: { backgroundColor: otherButtonsBackgroundColor } },
                 "\uD83D\uDE00"
               )
             ),
@@ -763,8 +839,12 @@ var ComposeMessageDiv = function (_React$Component9) {
               { className: "col-2 m-0 pl-1", style: { paddingRight: "2px" } },
               React.createElement(
                 "button",
-                { type: "button", className: "btn btn-primary w-100 h-100", id: "send-button" },
-                "Send"
+                { type: "button", className: "btn w-100 h-100 border-0", id: "send-button", style: { backgroundColor: sendButtonBackgroundColor, color: sendButtonTextColor } },
+                React.createElement(
+                  "b",
+                  null,
+                  "Send"
+                )
               )
             )
           )
@@ -794,8 +874,9 @@ var MainMessagesDiv = function (_React$Component10) {
       var messageTimestamps = this.props.messageTimestamps;
       var chatColors = this.props.chatColors;
       var chatName = this.props.chatName;
-      console.log('chatName');
-      console.log(chatName);
+
+      // console.log('chatName');
+      // console.log(chatName);
 
       // if (chatName == '') {
       //   chatName = 'SELECT A CHAT';
@@ -805,9 +886,18 @@ var MainMessagesDiv = function (_React$Component10) {
       //   {chatName}
       // </div>
 
+      var useColors = chatColors;
+      if (chatName == '') {
+        // useColors = DEFAULT_CHAT_COLORS;
+      }
+
+      var mainMessagesBackgroundColor = useColors[0];
+      var infoButtonBackgroundColor = useColors[2];
+      var infoButtonTextColor = useColors[4];
+
       return React.createElement(
         "div",
-        { id: "main-messages-div", className: "p-1 rounded h-100 border border-white", style: { backgroundColor: chatColors[0] } },
+        { id: "main-messages-div", className: "p-1 rounded h-100 border border-0", style: { backgroundColor: mainMessagesBackgroundColor } },
         React.createElement(
           "div",
           { className: "container-fluid p-0" },
@@ -817,26 +907,30 @@ var MainMessagesDiv = function (_React$Component10) {
             React.createElement(
               "div",
               { className: "col-10 p-0 m-0" },
-              React.createElement("input", { type: "text", className: "form-control", autoComplete: "off", id: "current-chat-name-input", placeholder: chatName })
+              React.createElement("input", { type: "text", className: "form-control border-0", autoComplete: "off", id: "current-chat-name-input", placeholder: chatName })
             ),
             React.createElement(
               "div",
               { className: "col-2 p-0 m-0 pl-1" },
               React.createElement(
                 "button",
-                { type: "button", className: "btn btn-secondary w-100 text-white p-auto position-relative", id: "chat-info-button", style: { height: "38px" } },
-                "Info"
+                { type: "button", className: "btn btn-secondary w-100 p-auto position-relative border-0", id: "chat-info-button", style: { height: "38px", backgroundColor: infoButtonBackgroundColor, color: infoButtonTextColor } },
+                React.createElement(
+                  "b",
+                  null,
+                  "Info"
+                )
               )
             )
           )
         ),
         React.createElement(MessagesDiv, { chatColors: chatColors, ref: function ref(messagesDivComponent) {
             window.messagesDivComponent = messagesDivComponent;
-          }, messageIds: messageIds, messageTexts: messageTexts, messageSenders: messageSenders, messageTimestamps: messageTimestamps }),
+          }, messageIds: messageIds, messageTexts: messageTexts, messageSenders: messageSenders, messageTimestamps: messageTimestamps, chatName: chatName }),
         React.createElement(TypingUserDiv, { ref: function ref(typingUserDivComponent) {
             window.typingUserDivComponent = typingUserDivComponent;
           } }),
-        React.createElement(ComposeMessageDiv, null)
+        React.createElement(ComposeMessageDiv, { chatName: chatName, chatColors: chatColors })
       );
     }
   }]);
@@ -861,13 +955,17 @@ var LoginUserDiv = function (_React$Component11) {
     value: function render() {
       return React.createElement(
         "div",
-        { id: "login-user-div", className: "container-fluid bg-white p-2 mb-1 rounded" },
-        React.createElement("input", { type: "text", className: "form-control mb-1", placeholder: "Email", autoComplete: "off", id: "login-email-input", defaultValue: "" }),
-        React.createElement("input", { type: "password", className: "form-control mb-2", placeholder: "Password", autoComplete: "off", id: "login-password-input", defaultValue: "" }),
+        { id: "login-user-div", className: "container-fluid p-2 mb-1 rounded", style: { backgroundColor: '#ebebeb' } },
+        React.createElement("input", { type: "text", className: "form-control mb-1 border-0", placeholder: "Email", autoComplete: "off", id: "login-email-input", defaultValue: "" }),
+        React.createElement("input", { type: "password", className: "form-control mb-2 border-0", placeholder: "Password", autoComplete: "off", id: "login-password-input", defaultValue: "" }),
         React.createElement(
           "button",
           { className: "btn btn-primary btn-block", id: "login-button" },
-          "Login"
+          React.createElement(
+            "b",
+            null,
+            "Login"
+          )
         )
       );
     }
@@ -890,14 +988,18 @@ var CreateUserDiv = function (_React$Component12) {
     value: function render() {
       return React.createElement(
         "div",
-        { id: "create-user-div", className: "container-fluid bg-white p-2 mb-1 rounded" },
-        React.createElement("input", { type: "text", className: "form-control mb-1", placeholder: "Full Name", autoComplete: "off", id: "create-user-name-input" }),
-        React.createElement("input", { type: "text", className: "form-control mb-1", placeholder: "Email", autoComplete: "off", id: "create-user-email-input" }),
-        React.createElement("input", { type: "password", className: "form-control mb-2", placeholder: "Password", autoComplete: "off", id: "create-user-password-input" }),
+        { id: "create-user-div", className: "container-fluid p-2 mb-1 rounded", style: { backgroundColor: '#ebebeb' } },
+        React.createElement("input", { type: "text", className: "form-control mb-1 border-0", placeholder: "Full Name", autoComplete: "off", id: "create-user-name-input" }),
+        React.createElement("input", { type: "text", className: "form-control mb-1 border-0", placeholder: "Email", autoComplete: "off", id: "create-user-email-input" }),
+        React.createElement("input", { type: "password", className: "form-control mb-2 border-0", placeholder: "Password", autoComplete: "off", id: "create-user-password-input" }),
         React.createElement(
           "button",
           { className: "btn btn-primary btn-block", id: "create-user-button" },
-          "Create Account"
+          React.createElement(
+            "b",
+            null,
+            "Create Account"
+          )
         )
       );
     }
@@ -1090,7 +1192,7 @@ var MessageDiv = function (_React$Component13) {
 
         textDiv = React.createElement(
           "div",
-          { className: "w-100 p-0 m-0", onClick: function onClick() {
+          { className: "w-100 p-0 m-0", "data-toggle": "tooltip", title: timestampText, onClick: function onClick() {
               return _this15.loadImage(fileName);
             } },
           React.createElement("img", { className: imageClassText, id: imageId, style: { maxHeight: "100%", maxWidth: "100%" } }),
@@ -1200,6 +1302,15 @@ var MessagesDiv = function (_React$Component14) {
       return React.createElement(
         "div",
         { id: "messages-div", className: "overflow-auto position-absolute pr-0", style: { height: "calc(100vh - 102px)", top: "46px", width: "calc(100% - 10px)" } },
+        this.props.chatName == '' && this.props.messageTexts.length <= 0 && React.createElement(
+          "div",
+          { id: "loading-div", className: "row align-items-center h-100 w-100" },
+          React.createElement(
+            "div",
+            { className: "col-12 text-center" },
+            React.createElement("div", { className: "spinner-border text-secondary" })
+          )
+        ),
         React.createElement(
           "div",
           { className: "container-fluid m-0 p-0 pr-1" },
@@ -1239,7 +1350,7 @@ var App = function (_React$Component15) {
       chatNames: [],
       chatIds: [],
       chatName: '',
-      chatColors: ['#343a40', '#007bff', '#868e96', '#ffffff', '#ffffff']
+      chatColors: DEFAULT_CHAT_COLORS
     };
     return _this17;
   }
@@ -1343,7 +1454,8 @@ var App = function (_React$Component15) {
         messageIds: [],
         messageTexts: [],
         messageSenders: [],
-        messageTimestamps: []
+        messageTimestamps: [],
+        chatName: ''
       });
 
       this.database = database.ref().child('chats').child(chatId).child('messages');
@@ -1423,7 +1535,7 @@ var App = function (_React$Component15) {
         var chatColors = snap.val().chatColors;
 
         if (chatColors === undefined) {
-          chatColors = ['#343a40', '#007bff', '#868e96', '#ffffff', '#ffffff'];
+          chatColors = DEFAULT_CHAT_COLORS;
         }
 
         _this19.setState({
@@ -1572,22 +1684,44 @@ ReactDOM.render(React.createElement(App, { ref: function ref(ourComponent) {
 
 $("#file-input-label").hover(function () {
 
-  $(this).css("backgroundColor", LightenDarkenColor("#868e96", -40));
-
   if (SELECTED_FILE != null) {
     $("#file-input-label").html("&#10060;");
   }
 }, function () {
-
-  $(this).css("backgroundColor", LightenDarkenColor("#868e96", -20));
 
   if (SELECTED_FILE != null) {
     $("#file-input-label").html("&#10004;");
   }
 });
 
-$("#reset-chat-colors-button").click(function () {
-  updateChatColors(CHAT_ID, ['#343a40', '#007bff', '#868e96', '#ffffff', '#ffffff']);
+// $("#reset-chat-colors-button").click(function() {
+//   updateChatColors(CHAT_ID, ['#343a40', '#007bff', '#868e96', '#ffffff', '#ffffff']);
+// });
+
+$(".theme-button").click(function () {
+  switch (this.id) {
+    case 'theme-original':
+      updateChatColors(CHAT_ID, DEFAULT_CHAT_COLORS);
+      break;
+    case 'theme-orange':
+      updateChatColors(CHAT_ID, ['#ebebeb', '#eaa422', '#eaa422', '#ffffff', '#ffffff']);
+      break;
+    case 'theme-light':
+      updateChatColors(CHAT_ID, ['#ebebeb', '#007bff', '#868e96', '#ffffff', '#ffffff']);
+      break;
+    case 'theme-floating':
+      updateChatColors(CHAT_ID, ['#ebebeb', '#ebebeb', '#ebebeb', '#000000', '#000000']);
+      break;
+    case 'theme-water':
+      updateChatColors(CHAT_ID, ['#0c4a7c', '#1181c6', '#3daaed', '#001e53', '#001e53']);
+      break;
+    case 'theme-beige':
+      updateChatColors(CHAT_ID, ['#185370', '#33b2c8', '#c08630', '#ffffff', '#ffffff']);
+      break;
+    case 'theme-berry':
+      updateChatColors(CHAT_ID, ['#a3a3f1', '#b4585a', '#b65694', '#ffffff', '#ffffff']);
+      break;
+  }
 });
 
 $("#chat-info-button").click(function () {
